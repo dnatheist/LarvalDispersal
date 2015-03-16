@@ -6,7 +6,7 @@ date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
 output: word_document
 ---
 
-
+#gitchange test
 
 ```{r, "Project_Template_and_Knitr", echo=FALSE}
 #The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
