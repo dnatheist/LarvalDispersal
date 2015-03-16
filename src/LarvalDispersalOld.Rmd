@@ -1,0 +1,302 @@
+
+---
+title: "Upper Murrumbidgee Larval Cod Dispersal Analysis"
+author: "Alan Couch"
+date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
+output: word_document
+---
+
+
+
+```{r, "Project_Template_and_Knitr", echo=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
+
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+
+```{r "LoadLibraries", echo=TRUE}
+source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
+library(ggplot2)
+library(ggdendro)
+library(ape)
+library(dendextend)
+```
+This document maps out the analysis of the dispersal of Murray cod larvae in the Murriumbidgee river. It includes sampling, larval morphological characteristics, genome profile and a natural biogeochemical markers. The larvae used in the dispersal analysis were collected in 2013 from 6 sites. The data used for ageing were collected over the three years 2011-2013.
+
+![Map of Study Area](../images/M2GStudyArea.jpg)
+
+All Maccullochella Larvae
+-------------------------
+```{r "All_Maccullochella_Larvae", echo=TRUE}
+
+#Heat map
+
+#Create a distance matrix for all Maccullochella larvae
+MacDm <- dist(allsnps)
+
+#Make a heat map
+dataMatrix <- as.matrix(MacDm)
+heatmap(dataMatrix)
+
+#Do a heirarchical cluster
+MacHC <- hclust(MacDm)
+#Plot the cluster dendrogram
+plot(MacHC, main="All Maccullochella Larvae")
+```
+
+
+```{r "Addicted_2_R_All"}
+# load code of A2R function
+#source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")
+# colored dendrogram
+#op = par(bg = "#EFEFEF")
+A2Rplot(MacHC, k =5, boxes = FALSE, col.up = "gray50")
+
+######################
+# GG dendrograms
+
+# basic option
+
+ggdendrogram(MacHC, rotate = TRUE, size = 4, theme_dendro = FALSE)
+```
+
+The above dendrograms shows Murray cod and two known Trout cod controls and what appears to be F1 and F2 hybrids. There were only 4 hybrid and 0 pure trout cod larvae deteced in the 92 larvae caught and sequenced. 
+
+It will be interesting to mito-sequence the trout cod and determine the species of the male and female parent. I expect that the female is the Trout cod given the scarcity of trout cod compared with Murray cod and the mate pressure that must exist. 
+
+So we now remove the non- Murray cod to identify Murray cod haplogroups and conduct the remainder of the analysis on the Upper Murrumbidgee Murray cod larvae only.  
+
+Murray Cod Larvae
+-----------------
+```{r, "Murray_Cod_Larvae_Only", echo=TRUE}
+
+#Create a Murray Cod distance matrix
+MCdm <- dist(MCsnps)
+#Heat map
+dataMatrix <- as.matrix(MCdm)
+heatmap(dataMatrix)
+#cluster
+MChc <- hclust(MCdm)
+#Plot it
+plot(MChc,main="Maccullochella peelii Larvae")
+```
+
+The distance matrix suggest a very low genetic diversity in the population of Murray cod sampled. Given this, how to determine if the closely related larvae are siblings? 
+
+In most cases very closely related larvae have been collected at the same spot over the same couple of days. But in some cases very closely related pairs of larvae have turned up at different sites. Sometimes over time frames that seem unlikely or suggest the larvae have travelled upstream. However, must remember that it is siblings - not the same fish - that is caught so this might just represent the 'smear' of larvae along the river after dispersing from the nest.
+
+```{r, "A2R_Dendrogram"}
+
+#Colour Dendrogram
+A2Rplot(MChc, k = 12, boxes = FALSE, col.up = "gray50")
+```
+
+The Murray cod can be resolved into 12 clades. Can I call these Haplogroups? Is 12 the right sort of cutoff? Should there be more?
+
+```{r, "Another_Dendrogram", echo=TRUE}
+# basic option
+ggdendrogram(MChc, rotate = TRUE, size = 4, theme_dendro = FALSE)
+
+```
+
+```{r, "ExtractAndDisplayClades", echo=TRUE}
+#dend1 <- color_branches(MChc, k = 12)
+dend1 <- color_labels(MChc, k = 12)
+plot(dend1)
+# Get the package:
+#cutree(dend1,h=70) # it now works on a dendrogram. Use h or k
+# It is like using:
+#dendextend:::cutree.dendrogram(dend1,h=70)
+
+cladeNo<-cutree(dend1,k=12)
+cladeNo<-as.data.frame(cladeNo)
+cladeNo
+
+```
+
+Trout Cod Larvae
+----------------
+```{r, "Trout_Cod_Dendrograms", echo=TRUE}
+#and a Trout Cod 
+TCdm <- dist(TCsnps)
+#Heat map
+dataMatrix <- as.matrix(TCdm)
+heatmap(dataMatrix)
+#cluster
+TChc <- hclust(TCdm)
+#Plot it
+plot(TChc, main="Maccullochella macquariensis larvae")
+
+A2Rplot(TChc, k =3, boxes = FALSE, col.up = "gray50")
+```
+
+
+Upper Murrumbidgee Larval Cod Genetic and Geographic Distances
+==============================================================
+
+This document maps out the physical distances with genetic distance of larvae from the Murrumbidgee collected in 2013 from 6 sites.
+
+```{r "Load_More_Libraries", echo=TRUE}
+library(Hmisc)
+library(ade4)
+```
+
+This file is to add some calculations to qslLarvaeAgePlus. In particular to add:
+ 
+  Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361
+  
+  Hatch DoY :  [Day of Year Caught]-[Age From Otolith Length]
+  
+  Incubation: 20.67-0.667*[WaterTemp(DegC) Mean]
+  
+  Spawning:[Hatch]-[Incubation]
+
+```{r "Additional_Calculations_and_Ordering", echo=TRUE}
+#This file is to add some calculations to qslLarvaeAgePlus. In particular to add:
+#  
+  #Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361
+  #Hatch DoY :  [Day of Year Caught]-[Age From Otolith Length]
+  #Incubation: 20.67-0.667*[WaterTemp(DegC) Mean]
+  #Spawnin:[Hatch]-[Incubation]
+  #larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(300*(larv$Day.of.Year-(larv$hatchdoy+7)))
+#
+#
+
+larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
+larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
+larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
+larv$spawn<-larv$hatchdoy-larv$incTime
+larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(1000*(larv$Day.of.Year-(larv$hatchdoy+7)))  
+
+#larv[,119:123] #just to see all OK
+
+#remove larvae that do not have genetic analysis done.
+#Creat a MCsnps set with row names as a column.
+MCchecklist<-row.names(MCsnps)
+MCchecklist<-as.data.frame(MCchecklist)# 93 records
+
+#remove a few more anomolies
+MCchecklist1 <- as.data.frame(MCchecklist[-c(1:7), ])
+# Keep every record in larv that is also in MCchecklist (i.e., the intersection).
+
+larv_intersection <- larv[larv$Label %in% MCchecklist$MCchecklist,]
+#Thanks: https://heuristically.wordpress.com/2009/10/08/delete-rows-from-r-data-frame/
+
+larv<-larv_intersection
+larv_intersection<-NULL
+
+###########
+# Re creat GenDist from code in dendrograms code file
+# Create a Murray Cod distance matrix
+MCdm<-MCsnps[-c(1:7),]
+MCdm <- dist(MCdm)
+MCdm<-as.matrix(MCdm)
+MCdm<-as.data.frame(MCdm)
+#This is to be used for plotting
+###########
+
+geodist<-data.frame(larv$Label,larv$nestdist)
+row.names(geodist)<-geodist[,1]
+geodist$larv.Label<-NULL
+geodist<-na.omit(geodist)
+geodist1000<-geodist #save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
+
+GeoDistMat<-dist(geodist)
+GeoDistMathm <- as.matrix(GeoDistMat)
+heatmap(GeoDistMathm)
+geoclust<-hclust(GeoDistMat)
+plot(geoclust)
+
+#make sure both matrices are in correct order - rows and cols
+#First sort MCdm
+
+MCdm<-as.data.frame(MCdm)
+MCdm$sort<-row.names(MCdm)
+MCdm <- MCdm[order(MCdm$sort),]#sort row order
+MCdm$sort<-NULL
+MCdm<-MCdm[,order(names(MCdm))]#sort column order
+MCdm<-as.matrix(MCdm)
+
+#Second sort GeoDist
+GeoDistMathm<-as.data.frame(GeoDistMathm)
+GeoDistMathm$sort<-row.names(GeoDistMathm)
+GeoDistMathm <- GeoDistMathm[order(GeoDistMathm$sort),]#sort row order
+GeoDistMathm$sort<-NULL
+GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
+GeoDistMathm<-as.matrix(GeoDistMathm)
+
+```
+Now that these various matrices, class 'dist' objects are created we can proceed for plot.
+
+Plot and Correlate genetic and geographic distance matrices
+-----------------------------------------------------------
+```{r "Plots_and_Correlation", echo=TRUE}
+#plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
+plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
+# Correlations with significance levels
+rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])#(x, type="pearson") # type can be pearson or spearman
+```
+
+So there is some small but significant correlation between genetic distance and geographic distance in the Murray cod sampled. 
+
+Linear Regression Model
+-----------------------
+```{r "Liner_Regression_Model_for_Genetics_and_Distance", echo=TRUE}
+reg=lm(MCdm[lower.tri(MCdm)]~GeoDistMathm[lower.tri(GeoDistMathm)])
+summary(reg)
+plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
+abline(reg)
+```
+
+Mantel Test
+-----------
+```{r "Mantel_Test", echo=TRUE}
+mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 9999)
+mant
+#Check all is in order
+as.matrix(GeoDistMathm)[1:5, 1:5]
+as.matrix(MCdm)[1:5, 1:5]
+```
+Based on these results, we can reject the null hypothesis that these two matrices, spatial distance and genetic distance, are unrelated with alpha = `r mant$pvalue`.  The observed correlation, `r mant$obs`, suggests that the matrix entries are positively associated.  So smaller differences in genotype are generally seen among pairs of larvae that are from nests estimated to be geographicallyclose to each other, rather than nests which are estimated to be further away from each other.   Note that since this test is based on random permutations, the same code will always arrive at the same observed correlation but rarely the same p-value. 
+
+The question needs to be asked, and answered, as to how the 1000m distance used in the nest distance  estimation equation was derived. This was estimated by iterating the Mantel test for each distance matrix calculated after calculating that matrix using a 'larval dispersal' distance from 1 m to 5000 metres.The highest corellation suggests that it is the distance that best represents the average distance that larvae disperse. The curve produced from the estimations is as follows.
+
+# read chunk (does not run code)
+```{r echo=FALSE}
+read_chunk('IteratedMantel.R')
+```
+# run the IM chunk (all) IteratedMantel
+```{r IteratedMantelGo}
+<<IM>>
+```
+
+Look at Haplogroups Over the River Reach
+----------------------------------------
+```{r "Haplogroups_and_Location", echo =TRUE}
+
+
+larv1<-larv
+larv1<-merge(larv,cladeNo, by="row.names")
+rownames(CladeNamesToMerge) <- CladeNamesToMerge[,1]
+CladeNamesToMerge$Label<-rownames(CladeNamesToMerge)
+larv2<-merge(larv1,CladeNamesToMerge, by="Label")
+plot(larv2$nestdist,larv2$clade, xlab="Nest Distance (m)", ylab = "Clade")
+#merged<-merge(Haplogroups,geodist1000, by="row.names")      
+#plot(merged$larv.nest,merged$Haplogroups)
+```
+This suggests that all haplogroups except 5 exist below some barrier but that only haplogroups 7,4 and 2 also exist above this barrier. On possible explanation that might be inferred from this is that adults migrating upstream for spawning are prevented from doing so by a barrier at 25000m mark but that larvae produced above the barrier are able to disperse and so are represented downstream. The big gap in apparent nests from 6000m to 14000m corresponds with the Tharwa sand slug - a long stretch of sand that has previously been the subject of remedial work because it has been believed to be a barrier to cod migration (ref).   
+
+Code Chunks in this Document
+----------------------------
+```{r "Include_Labels_for_all_code_Chunks"}
+all_labels()
+```
