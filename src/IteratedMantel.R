@@ -91,4 +91,6 @@ itmant<-na.omit(itmant)
 itmantdf<-as.data.frame(itmant)
 plot(itmantdf$V1,itmantdf$V2)
 
+BestNestEst<- subset(itmantdf, V2==max(V2) , select = V1)
+BestNestEst<-as.numeric(BestNestEst)
 

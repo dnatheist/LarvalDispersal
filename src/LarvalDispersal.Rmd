@@ -39,7 +39,7 @@ This document maps out the analysis of the dispersal of Murray cod larvae in the
 
 Calculate Some Additional Parameters
 ------------------------------------
-This section is to add some calculations to the data set. In particular to add:
+This section is to add some calculated variables to the data. In particular to add:
  
   Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361
   
@@ -176,13 +176,13 @@ Upper Murrumbidgee Larval Cod Genetic and Geographic Distances
 read_chunk('IteratedMantel.R')
 ```
 # run the IM chunk (all) IteratedMantel
-```{r IteratedMantelGo}
+```{r IteratedMantelGo, echo=TRUE}
 <<IM>>
 ```
-This test corelates the physical distances with genetic distance of larvae from the Murrumbidgee collected in 2013 from 6 sites.
-By iterating the mantel test using distance matrices generated over varying nest distances and finding the most highly corelated provides a best estimate of the distance a nest site is. In this case it is `r BestNestEst` *Alan - change this code to be more interactive with the maxima of the iterated mantel.
+This test corelates the physical distances of the nests of the larvae with genetic distance of larvae from the Murrumbidgee collected in 2013 from 6 sites.
+By iterating the mantel test using distance matrices generated over varying nest distances and finding the most highly corelated provides a best estimate of the distance a nest site is. In this case it is the distance above the collection site if the larvae 'drift' `r BestNestEst` metres per day between leaving the nest and being collected at sampling site. 
 
-There is a possibiltiy that if this was done with mitochondrial sequences and downstram distance matrix the best estimate for the female upward migration might be found if iterate say: 1000-20000m. But also the chemotype might allow use to do something similar with it and geo distance.
+There is a possibiltiy that if this was done with mitochondrial sequences and downstream distance matrix the best estimate for the female upward migration might be found if iterate say: 1000-20000m. But also the chemotype might allow use to do something similar with it and geo distance.
 
 
 ```{r "Distance_Matrices_and_Ordering", echo=TRUE}

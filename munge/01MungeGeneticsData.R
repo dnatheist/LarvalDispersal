@@ -1,5 +1,5 @@
 #Place to centralise the Best Nest Estimate Distance, for the use of 
-BestNestEst<-1000
+#BestNestEst<-1000 commented out as probably not required as automated from Iterated Mantel
 
 #Set the path to data
 fp<-file.path("C:\\Users\\s428825\\Google Drive\\PhD Analyses\\LarvalDispersal\\data\\")
