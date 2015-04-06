@@ -91,6 +91,21 @@ itmant<-na.omit(itmant)
 itmantdf<-as.data.frame(itmant)
 plot(itmantdf$V1,itmantdf$V2)
 
+###########
+require(plotrix)
+op <- par(cex.main = 1.5, mar = c(5, 6, 4, 5) + 0.1, mgp = c(3.5, 1, 0), cex.lab = 1.5 , font.lab = 2, cex.axis = 1.3, bty = "n", las=1)
+plot(itmantdf$V1, itmantdf$V2, col="black", pch=21, bg = "grey", cex = 2,
+     xlim=c(0,5000), ylim=c(0,.25), ylab="", xlab="", axes=F)
+axis(1)
+axis(2) 
+reg1 <- lm(itmantdf$V2~itmantdf$V1)
+ablineclip(reg1, lwd=2,x1 = .9, x2 = 1.2) 
+par(las=0)
+mtext("Daily Drift Distance (m)", side=1, line=2.5, cex=1.5)
+mtext("Correlation", side=2, line=3.7, cex=1.5)
+
+###########
+
 BestNestEst<- subset(itmantdf, V2==max(V2) , select = V1)
 BestNestEst<-as.numeric(BestNestEst)
 
