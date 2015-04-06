@@ -1,0 +1,6 @@
+1. Redesign data from scratch. At present there are too many interdependencies from one code chunk to another. Sort out should it be in initial munge or not?
+
+2. Make code chunks stand alone.
+3. Include libraries in chunks - not all up front in knitr
+4. save outputs for reuse easily (at present I have to run whole knitr thing each time.)
+5. Consider use of cache for time intensive things (like Iterated mantel) 
