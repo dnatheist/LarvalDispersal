@@ -2,5 +2,8 @@
 .Rhistory
 .RData
 .graphs
+.images
+.reports
+.Tableau
 -1
 tst.csv
