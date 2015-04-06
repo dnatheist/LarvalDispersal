@@ -1,0 +1,13 @@
+lookupVariable,lookupValue,newVariable,newValue,source
+SiteName,Tharwa Sandwash,threeGroups,Upper,Alan
+SiteName,Lanyon,threeGroups,Upper,Alan
+SiteName,Murramore,threeGroups,Middle,Alan
+SiteName,Kambah Pool,threeGroups,Middle,Alan
+SiteName,Bullen Range,threeGroups,Lower,Alan
+SiteName,Nerreman,threeGroups,Lower,Alan
+SiteName,Tharwa Sandwash,twoGroups,Top,Alan
+SiteName,Lanyon,twoGroups,Top,Alan
+SiteName,Murramore,twoGroups,Top,Alan
+SiteName,Kambah Pool,twoGroups,Bottom,Alan
+SiteName,Bullen Range,twoGroups,Bottom,Alan
+SiteName,Nerreman,twoGroups,Bottom,Alan
