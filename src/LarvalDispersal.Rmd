@@ -167,7 +167,7 @@ There is a possibiltiy that if this was done with mitochondrial sequences and do
 ```{r "Distance_Matrices_and_Ordering", echo=TRUE}
 # To create a distance
 larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(BestNestEst*(larv$Day.of.Year-(larv$hatchdoy+7)))
-
+#write.csv(format(larv), file="./Tableau/larvForTableau.csv", row.names=FALSE)
 #remove larvae that do not have genetic analysis done.
 #Creat a MCsnps set with row names as a column.
 MCchecklist<-row.names(MCsnps)
