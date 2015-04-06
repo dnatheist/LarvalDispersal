@@ -4,4 +4,4 @@
 3. Include libraries in chunks - not all up front in knitr
 4. save outputs for reuse easily (at present I have to run whole knitr thing each time.)
 5. Consider use of cache for time intensive things (like Iterated mantel) 
-6. Need to tidy up (remove spent variables) at end of each .r file or Knitr chunk. (Or save them specifically if required)
+6. Need to tidy up (remove spent variables) at end of each .r file or Knitr chunk. (Or save them specifically if required) 
