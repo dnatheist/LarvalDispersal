@@ -138,7 +138,11 @@ colnames(larv)[2]<-"LarvalID"
 ChemAnal0<-merge(larv,EachOtoData,by = "LarvalID")
 ##############################
 
+ChemAnal0<-ChemAnal0[-26,] # an extreme B outlier that was missed at data clean
 
+# Now make two more:
+ChemAnalAll4<-rbind(ChemAnal0,ChemAnalCore,ChemAnalE1,ChemAnalE2)
+ChemAnalNonCore<-rbind(ChemAnal0,ChemAnalE1,ChemAnalE2)
 
 
 
