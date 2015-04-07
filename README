@@ -1,23 +1,5 @@
 This project is code in Knitr and r files to analyse data regarding Murray cod larval drift in the upper Murrumbidgee river in 2013. Hopefully the code is easily extensible to other years data, and additional data.
 
-<<<<<<< HEAD
-The structure is based on Project Template and requires ProjectTemplat library to be loaded and run. 
-  
-  library('ProjectTemplate')
-  load.project()
-
-The data come out of the MS access database originally and is a csv paste of the qslLarvaeAgePlus query.
-There are some other data files as well.
-
-Chemistry data from the Laser ablation mass spectrometry.
-Carbon and Nitrogen Isotope delta data.
-Genetic data from DArT sequencing x 2. SNPS and a distance martrix. each was a seperate sheet in the original data from DArT.
-
-A few lists also include 'names' of clades and groupings of the 6 sites along the river. Each is required for some part of the analysis. 
-
-There is a Tableau folder which contains a Tableau workbook and a number of r outputs for subsequent analysis in Tableau. This is because Tableau does good graphics and specifically can do paged or animated plotting which is useful for some things.
-
-=======
 The data come out of the MS access database originally and is a csv paste of the qslLarvaeAgePlus query.
 There are some other data files as well.
 
@@ -29,5 +11,4 @@ A few lists also include 'names' of clades and groupings of the 6 sites along th
 
 There is a Tableau folder which contains a Tableau workbook and a number of r outputs for subsequent analysis in Tableau. This is because Tableau does good graphics and specifically can do paged or animated plotting which is useful for some things.
 
->>>>>>> ec0638033630a281f79ddf089a364751e705da1b
 Reports from Knitr wind up by unchangeable default in the src folder so get moved to the Reports folder manually. There are some other outputs from r that wind up in there as well although I might remove them as they are really data files and usually for Tableau or some other external app.
