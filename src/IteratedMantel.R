@@ -15,7 +15,8 @@ library(ade4)
 #
 #
 
-larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
+#larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
+larv$ageOL<- 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967
 larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
 larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
 larv$spawn<-larv$hatchdoy-larv$incTime

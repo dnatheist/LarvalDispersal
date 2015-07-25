@@ -285,6 +285,25 @@ This suggests that all clades except one (hT1) exist below a barrier around 1000
 
 ![Nest Along the River](../images/Dashboard1.jpg)
 
+```{r sumMatricesToFindNests}
+read_chunk('sumMatricesToFindNests.R')
+```
+
+```{r sumMatricesToFindNestsGo, echo=TRUE}
+<<sumMatricesToFindNests>>
+```
+
+##Siblings and What they can tell us about Larval Dispersal
+The identification of various sibling pairs and groups in the data (they can be seen in the bottom left of the genetic distance v. distance scatterplot) can potentially be useful in exploring some angles of larval dispersal. For example do siblings dispere in schools or alone? How long does the hatch period in the wild last? It is known in hatcheries to last x days but not in the wild. Siblings also facilitate accurate allocation of larvae to nest because, by definition, they come from the same nest. If siblings appear between years  then this would suggest repeat adult pairings over years. To date we do not know if this happens.
+
+```{r echo=FALSE}
+read_chunk('siblingAnalysis.R')
+```
+
+```{r siblingAnalysisGo, echo=TRUE}
+<<siblingAnalysis>>
+```
+
 
 ##Natural BioGeochemistry Markers
 
