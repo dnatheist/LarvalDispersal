@@ -1,5 +1,3 @@
-#Place to centralise the Best Nest Estimate Distance, for the use of 
-#BestNestEst<-1000 commented out as probably not required as automated from Iterated Mantel
 
 #Set the path to data
 fp<-file.path("C:\\Users\\s428825\\Google Drive\\PhD Analyses\\LarvalDispersal\\data\\")
@@ -17,7 +15,7 @@ rm(qslLarvaeAgePlus) #Tidy up
 # Extract more meaningful names (Labels) in place of Larval ID numbers
 DArTsnps<-t(DArTsnps) # Just transpose this way larvae become observations and snps become the variables.
 vec<-DArTsnps[,4]# List of DArT 'larval identifiers' for use recoding names with recoderFunc
-# which translates the Dart identifiers into something more meaningful (Labels) from the database.
+# which translates the DaRT identifiers into something more meaningful (Labels) from the database.
 
 recoderFunc <- function(data, oldvalue, newvalue) {
   
@@ -42,6 +40,7 @@ recoderFunc <- function(data, oldvalue, newvalue) {
 vec<-recoderFunc(vec, larv$LarvalRecords.LarvaID, larv$Label)
 
 DArTsnps[,4]<-vec # Load more meaningful names (Labels) in place of Larval ID numbers
+rm(vec)# Tidy up
 
 rownames(DArTsnps) <- DArTsnps[,4] #Make rownames meaningful
 DArTsnps<-as.data.frame(DArTsnps) #Make a dataframe

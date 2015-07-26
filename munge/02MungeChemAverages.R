@@ -1,6 +1,4 @@
-#Draft code for extracting elemental averages and sd for each otolith core and shoving it in a dataframe for export to database, for subsequent analysis with delta C delta N etc.
-
-# Needs checking but seems to be working.
+#Draft code for extracting elemental averages and sd for each otolith core and shoving it in a dataframe for export to database, for subsequent analysis with delta C delta N etc.Seems to be working fine.
 
 ##Create new empty dataframe for the use of, with element headings.
 EachOtoData<-allOtoChemData
@@ -133,6 +131,9 @@ write.csv(EachOtoData,file= ".\\reports\\ElemForEachOtolith0.csv") # NB One "." 
 
 #Clean up
 rm(df)
+rm(e)
+rm(l)
+rm(mean)
 #Now to merge Labels and Sites
 colnames(larv)[2]<-"LarvalID"
 ChemAnal0<-merge(larv,EachOtoData,by = "LarvalID")
