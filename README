@@ -1,4 +1,5 @@
-This project is code in Knitr and r files to analyse data regarding Murray cod larval drift in the upper Murrumbidgee river in 2013. Hopefully the code is easily extensible to other years data, and additional data.
+This project is code in Knitr and r files to analyse data regarding Murray cod larval drift in the upper Murrumbidgee river in 2013. Hopefully the code is easily extensible to other years data, and additional data. 
+To run start with Go.R file (execute the first two lines) before anything else.To run interactively run each code chunk (callouts to other files need to be run manually) in correct order.
 
 The data come out of the MS access database originally and is a csv paste of the qslLarvaeAgePlus query.
 There are some other data files as well.
