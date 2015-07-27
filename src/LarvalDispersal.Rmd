@@ -22,7 +22,7 @@ opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
 ```
-This document maps out the analysis of the dispersal of Murray cod larvae in the Murriumbidgee river. It includes sampling, larval morphological characteristics, genome profile and a natural biogeochemical markers. First the relevant r libraries are loaded 
+This document maps out the analysis of the dispersal of Murray cod larvae in the Murriumbidgee river. It includes sampling, larval morphological characteristics, genome profile and a natural biogeochemical markers. First some of the relevant r libraries are loaded 
 
 ```{r "LoadLibraries", echo=TRUE}
 source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
