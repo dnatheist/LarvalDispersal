@@ -1,3 +1,5 @@
+NB: Many of the to do are also in outlook tasks.Need to see which works best.
+
 1. Redesign data from scratch. At present there are too many interdependencies from one code chunk to another. Sort out should it be in initial munge or not?
 
 2. Make code chunks stand alone.
