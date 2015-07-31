@@ -1,0 +1,71 @@
+
+---
+title: "Chapter 4 Aging, Distribution and Abundance"
+author: "Alan Couch"
+date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
+output: word_document
+---
+
+```{r, "Project_Template_and_Knitr", echo=FALSE, warning=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
+
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+This document is mainly to develop and output the method for the Aging part rather than the  Distribution and Abundance part of the chapter because the results and discussion parts are mostly done in word document for this chapter. (from the ACTEW document etc)
+
+Actually this whole file can probs be deleted as this aging is coming from Tableau formula.
+
+##Methods
+![Map of Study Area](../images/M2GStudyArea.jpg)
+
+###Calculate Some Additional Parameters
+
+This section is to add some calculated variables to the data. In particular to add:
+ 
+  Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361 (Days) (actually 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967)
+  
+  Hatch date:  [Day of Year Caught]-[Age From Otolith Length] (Day of the Year - DoY)
+  
+  Incubation: 20.67-0.667*[WaterTemp(DegC) Mean] (Days)
+  
+  Spawning:[Hatch]-[Incubation] (Day of the Year)
+
+These additional parameters will be used to estimate distances that the larvae have dispersed based on the number of days available to them since leaving the nest and the day and location of collection. In turn the time available will be used to model the most likely distance travelled by the larvae.
+
+```{r "Additional_Calculations", echo="TRUE"}
+
+#larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
+larv$ageOL<- 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967
+larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
+larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
+larv$spawn<-larv$hatchdoy-larv$incTime
+
+larv[c(20:30),c(119:122)] #just to see all OK
+```
+
+But before that we need to establish individual larval genetic identies so that we can see if genetic distance is positively corelated with geographic distance between individuals.
+
+##Results
+Results from this chapter are mostly done inthe existing word document chapter. May need updating to reflect refined aging parameters and multi-years aging curves.
+
+##Discussion (points only)
+Discussion is also mostly done in word document for this chapter.
+
+##Code Chunks in this Document
+
+```{r "Include_Chunk_Labels_and_Session Information"}
+all_labels()
+
+#Session Information
+sessionInfo()
+
+```

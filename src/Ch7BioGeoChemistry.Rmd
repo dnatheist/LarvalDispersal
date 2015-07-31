@@ -1,0 +1,124 @@
+
+---
+title: "Chapter 7 Natural Biogeochemistry and Dispersal"
+author: "Alan Couch"
+date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
+output: word_document
+---
+
+
+
+```{r, "Project_Template_and_Knitr", echo=FALSE, warning=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
+
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+This document includes methods, results and possibly some discussion dot points for the biogeochemistry chapter.   
+
+```{r "LoadLibraries", echo=TRUE}
+source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
+library(ggplot2)
+library(ggdendro)
+library(ape)
+library(dendextend)
+library(Hmisc)
+library(ade4)
+```
+##Method
+
+The first effort is based on the location of collection. Later, if there is a corelation between 'chemotype distance' and geographic distance we will look at the possibility of using an offset downstream of the origin of the mother. It is not likely possible as with larvae we could use larval 'drift' age days to get infrormation about each larvae. We can do this with the mothers but can we do something with the clade groups?
+
+###Identify Important Chemistry Variables for Prediction of Site
+
+In order to identify important variables in a multivariate dataset one can utilize machine learning methods. There are many different machine learning algorithms for different tasks. One common task is to decide if a feature vector belongs to a certain class. This can be done with a random forest classifier. In order to do so, one has to train the classifier with training data first. Then the classifier can be used to predict the class of other feature vectors.http://proven-inconclusive.com/blog/machine_learning_methods_to_identify_important_variables.html.  There is no need for other tests, such as cross-validation, to get an unbiased estimate of the test set error as each tree is created with a different bootstrap sample [2].
+
+The classifier saves information on feature importance ("importance=TRUE"). We can use this information in order to identify potentially import variables in the data set.
+
+###Results
+
+#### First with Elements Alone (Six OtoParts)
+
+```{r echo=FALSE}
+read_chunk('RandForestToIDImportantElem.R')
+```
+
+```{r RandomForestElemGo, echo=TRUE}
+<<RandomForestElem>>
+```
+
+#### Then with Elements and Isotopes (Six OtoParts but reduced number of larvae)
+
+```{r echo=FALSE}
+read_chunk('RandForestToIDImportantElemIso.R')
+```
+
+```{r RandomForestElemIsoGo, echo=TRUE}
+<<RandomForestElemIso>>
+```
+
+Given that each part of the otolith can provide an out-of-bag classification rate better than 75% it suggests that otolith microchemistry with delta 13 C and CN ratio, over this small spatial scale, is sufficiently consistently variable, at least within a year, to make a reasonable predictor of site of origin for the Larvae. It is worth noting that the otolith core provided the most accurate classification. Given the accuracy of the core chemistry is sub-optimal because of the inability of the operator to accuratel identify and sample the centre of the otolith in all cases with laser ablation the possibilty remains that cleaning the data in that dataset might be improved by deleting inaccurate ablates. This is possible because each otolith was assigned an accuracy score.
+
+###A Chemotype Dendrogram and a Mantel Test.
+
+Now that we have identified the best variables to use from the data we can create a dendrogram and use Mantel test to look for any relationship between chemotype and geographic distances. This first creates distance matrices for chemotype and geographic distance and then uses a mantel test to see correlation. The latter chemotypes are scaled.
+
+###What about LDA and Jacknifed Prediction
+```{r echo=FALSE}
+read_chunk('lda.R')
+```
+
+```{r ldaGo, echo=TRUE}
+<<lda>>
+```
+### What about Ordinal Logistic Regression
+```{r echo=FALSE}
+read_chunk('ordLogRegn.R')
+```
+
+```{r ordLogRegnGo, echo=TRUE}
+<<ordLogRegn>>
+```
+
+###Calculate Chemotype and Distance Correlations for Otolith Parts 
+```{r echo=FALSE}
+read_chunk('ChemotypeDistanceCorrelationsFunc.R')
+```
+
+```{r chemotypeDistanceMatricesGo, echo=TRUE}
+<<chemotypeDistanceMatrices>>
+```
+Based on these results, we cannot reject the null hypothesis that these two matrices, spatial distance and chemotype distance, are unrelated with alpha = `r mant$pvalue`.  The observed correlation, `r mant$obs`, suggests that the matrix entries are not positively associated. 
+
+
+###Is Chemotype Distance Correlated with Genotype Distance?
+
+```{r echo=FALSE}
+read_chunk('genChemDistPlot.R')
+
+```
+
+```{r genChemDistPlotGo, echo=TRUE}
+<<genChemPlot>>
+```
+##Discussion Points (just dot points)
+
+This is interesting given that there is a relationship between genotype and chemotype but it is not one due to covariance based on geographic distance. One not unreasonable explaination for this is that suggest that chemotype is afftected by the genotype directly. That is, element deposition in otolith is variable but under some genetic control. Another more intriguing possibility is that the geochemistry fails to predict the capture site of the larvae because it is not the ultimte source of that geochemistry. The ultimate source of the geochemistry is thewater and food environment of the female when the yolk which was laid down in the developing eggs. This happens earlier in the season and  well before spawning so it does leave ope the possibiltiy as suggested by some authors that the female has migrated to the spawning site. Unfortunately in this study there is no  measure that might be suitable as a proxy regarding the origin of the female during oogenisis.  
+
+##Code Chunks in this Document
+
+```{r "Include_Chunk_Labels_and_Session Information"}
+all_labels()
+
+#Session Information
+sessionInfo()
+
+```

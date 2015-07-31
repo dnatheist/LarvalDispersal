@@ -1,0 +1,291 @@
+
+---
+title: "Chapter 5 Genomics and Larval Dispersal Analysis"
+author: "Alan Couch"
+date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
+output: word_document
+---
+
+```{r, "Project_Template_and_Knitr", echo=FALSE, warning=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
+
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+This document includes methods, results and possibly some discussion dot points for the genomics and larval dispersal chapter.  
+
+```{r "LoadLibraries", echo=TRUE}
+source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
+library(ggplot2)
+library(ggdendro)
+library(ape)
+library(dendextend)
+library(Hmisc)
+library(ade4)
+```
+ The larvae used in the dispersal analysis were collected in 2013 from 6 sites.
+
+##Method
+
+```{r}
+#larvNoAge<-larv #prob redundant
+larv<-merge(larv,qslAgeData,by.x="LarvalID", by.y="LarvaID")
+```
+
+##Results
+
+###All Maccullochella Larvae
+
+A dendrogram of all the larvae allows examination of the relationships between all the larvae. In the first instance this is neccessary to ensure there are no species other than Murray cod in the subsequent analysis.
+
+```{r "All_Maccullochella_Larvae", echo=TRUE}
+
+MacDm <- dist(allsnps) #Create a distance matrix for all Maccullochella larvae
+
+heatmap(as.matrix(MacDm)) #Make a heat map
+
+MacHC <- hclust(MacDm) #make a heirarchical cluster
+
+plot(color_labels(MacHC, k = 5), main="All Maccullochella Larvae") #Plot the cluster dendrogram
+```
+
+All the larvae collected fall into one of four distinct clades. The above dendrograms shows all larvae (mostly Murray cod) and two known Trout cod controls, and what appears to be F1 and F2 hybrids between the two species. There were 4 hybrid and no pure trout cod larvae detected in the 92 larvae caught and sequenced from the river.
+
+It will be interesting to mito-sequence the trout cod and determine the species of the male and female parent. It is likely that that the female is the Trout cod in the mating pair given the scarcity of trout cod compared with Murray cod and the mate pressure that must exist. 
+
+So we now use the set with the non-Murray cod removed to identify Murray cod clades and conduct the remainder of the analysis on the Upper Murrumbidgee Murray cod larvae only.  The Trout cod and the hybrids are easily identified and eliminated from the data to ensure we are looking only at the Murray cod larvae.
+
+###Murray Cod Larvae
+
+First we look at a heat map and dendrogram of Murray cod larvae having excluded Trout cod and hybrids data from the dat frame. 
+```{r, "Murray_Cod_Larvae_Only", echo=TRUE}
+MCdm <- dist(MCsnps)#Create a Murray Cod Only distance matrix
+
+heatmap(as.matrix(MCdm), main="Murray Cod Heat Map")#Heat map
+
+MChc <- hclust(MCdm) #Clutser
+#Plot it
+plot(MChc,main="Maccullochella peelii Larvae")
+```
+
+In most cases very closely related larvae have been collected at the same spot over the same period of a few of days. But in some cases very closely related pairs of larvae have turned up at different sites. Sometimes over time frames that seem unlikely or suggest the larvae have travelled upstream. However, must remember that it is siblings - not the same fish - that is caught so this might just represent the 'smear' of larvae along the river after dispersing from the nest.
+
+The distance matrix suggests a very low genetic diversity in the population of Murray cod sampled with most of the distances around 0.03. Given this, can we be sure that the most closely related larvae are siblings? 
+
+```{r, "A2R_Dendrogram"}
+
+#Colour Dendrogram
+#A2Rplot(MChc, k = 12, boxes = FALSE, col.up = "gray50")
+dend1 <- color_labels(MChc, k = 12)#Use h or k
+plot(dend1, main="Maccullochella peelii Larvae")
+```
+
+The Murray cod larvae can now be resolved into 12 clades.
+```{r, "ExtractClades", echo=TRUE}
+
+cladeNo<-cutree(dend1,k=12) #This is like using:dendextend:::cutree.dendrogram(dend1,h=70) h or k can be specified
+cladeNo<-as.data.frame(cladeNo)
+#For example:
+cladeNo[c(20:30),] #The clades are numbered by default. So I need to name them something sensible for subsequent analysis.
+
+```
+
+Extract three higher level clades
+```{r "extractRaceClades", echo=TRUE}
+dend2 <- color_labels(MChc, k = 3)#Use h or k
+raceCladeNumber<-cutree(dend2,k=3) #This is like using:dendextend:::cutree.dendrogram(dend1,h=70) h or k can be specified
+raceCladeNumber<-as.data.frame(raceCladeNumber)
+raceCladeNumber[,] #The clades are numbered by default. So I need to name them something sensible for subsequent analysis.
+
+#Merge clade and raceClade numbers into one data frame for out put to database.
+# nearly got it going below but this is all fucked up.Tomorrow...
+larvalClades<-merge(cladeNo,raceCladeNumber, by="row.names")
+row.names(larvalClades)<-larvalClades$Row.names
+larvalClades$Row.names<-NULL
+#forgen<-merge(larv,larvalClades, by="row.names") 
+#row.names(forgen)<-forgen$Row.names
+#forgen <- forgen[c(-4:-125,-140:-144)]
+#forgen$Row.names<-NULL
+#forgen$Label<-NULL
+#forgen <- forgen[ ,c(1:5,14,7,13,9,10,11,12,13,6,8)] #order them for DB table
+#forgen$raceCladeNumber.x<-NULL
+#forgen$Genetics.CreatedDate<-NULL
+#forgen$cladeNumber<-NULL
+
+#write.csv(format(forgen), file="./reports/forgen.csv", row.names=FALSE)
+#Add Clade Names
+#So the list of larval clades (two levels) is:
+larvalClades
+```
+
+
+###Trout Cod Larvae
+
+Although Trout cod and hybrid data are excluded from further analysis, the heatmap and dendrogram are provided here for completeness. In any case it is not an insignificant finding that the two species do in fact hybridise in this natural riverine environment even though hybrids have been seen in hatcheries and impoundments previoulsy. Furthermore this is the first time fertile F1 have been recorded as evidenced by the finding of an F2 hybrid. That said there is some question as to the providence of the Trout cod in this case as they were believe extirpated and restocked too recently (2006?) for 2 generations to have occured. FACT check this.
+```{r, "Trout_Cod_Dendrograms", echo=TRUE}
+#A heatmap and dendrogram for Trout Cod shows three distinct clades.
+TCdm <- dist(TCsnps)
+#Heat map
+dataMatrix <- as.matrix(TCdm)
+heatmap(dataMatrix, main="Trout Cod Heat Map")
+#cluster
+TChc <- hclust(TCdm)
+#Plot it
+#plot(TChc, main="Maccullochella macquariensis larvae")
+A2Rplot(TChc, k =3, boxes = FALSE, col.up = "gray50",main = "Maccullochella macquariensis larvae")
+
+```
+Both the heatmap and dendrogram for Trout Cod shows three distinct clades.
+
+##Upper Murrumbidgee Larval Murray Cod Genetic and Geographic Distances
+
+This test corelates the physical distances of the nests of the larvae with genetic distance of larvae from the Murrumbidgee collected in 2013 from 6 sites.
+
+By iterating the mantel test using distance matrices generated for nest distances based on a range of larval dispersal velocities and the time available to those larvae for dispersal, we can identify the most highly correlated - the peak - which then allows an estimate of the average distance a nest site is from the collection site. The iterations of the Mantel test used a larval dispersal velocity range from 1 m to 5000 metres per day. The highest correlation is the distance that represents the average distance that larvae disperse. The assumption is that drift is downstream, not upstream. The curve produced from the estimations is as follows.
+
+###Iterate through Mantel test using a range of possible larval drift velocities.
+
+```{r echo=FALSE}
+read_chunk('IteratedMantel.R')
+```
+
+
+```{r first, echo=TRUE}
+<<IM>>
+```
+The distance above the collection site if the larvae disperse at `r dispersalVelocity` metres per day between leaving the nest and being collected at sampling site is the Murray cod larvae pelagic larval drift duration. 
+
+This average pelagic larval dispersal (PLD) value is an average for larvae along the entire river reach. It tells us nothing about the variance of that dispersal (or can it)??? It is most likely a  distribution of larvae drifting varying distances below the nest. The obvious thing to do would be to take the approach on a site by site basis over a number of years, because the river speeds vary at each site and between years but at present there are too few samples from most sites and other years to use such an approach with confidence.
+
+```{r "Distance_Matrices_and_Ordering", echo=TRUE}
+# To create a distance using the previously calculated best estimate of drift velocity (m/d available since leaving brood care)
+larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv$Day.of.Year-(larv$hatchDoY+7)))
+#write.csv(format(larv), file="./Tableau/larvForTableau.csv", row.names=FALSE)
+#remove larvae that do not have genetic analysis done.
+#Creat a MCsnps set with row names as a column.
+MCchecklist<-row.names(MCsnps)
+MCchecklist<-as.data.frame(MCchecklist)# 93 records
+
+#remove a few more anomolies
+MCchecklist1 <- as.data.frame(MCchecklist[-c(1:7), ])
+# Keep every record in larv that is also in MCchecklist (i.e., the intersection).
+
+larv_intersection <- larv[larv$Label %in% MCchecklist$MCchecklist,]
+#Thanks: https://heuristically.wordpress.com/2009/10/08/delete-rows-from-r-data-frame/
+
+larv<-larv_intersection
+larv_intersection<-NULL
+
+###########
+# Recreate Genetic Distance
+# Create a Murray Cod distance matrix
+MCdm<-MCsnps[-c(1:7),]
+MCdm <- dist(MCdm)
+MCdm<-as.matrix(MCdm)
+MCdm<-as.data.frame(MCdm)
+#This is to be used for plotting
+MCdmForSibs<-MCdm #need this matrix for sibling analysis .r
+###########
+
+geodist<-data.frame(larv$Label,larv$nestdist)
+row.names(geodist)<-geodist[,1]
+geodist$larv.Label<-NULL
+geodist<-na.omit(geodist)
+geodist1000<-geodist #save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
+
+GeoDistMat<-dist(geodist)
+GeoDistMathm <- as.matrix(GeoDistMat)
+heatmap(GeoDistMathm)
+geoclust<-hclust(GeoDistMat)
+plot(geoclust)
+
+#make sure both matrices are in correct order - rows and cols
+#First sort MCdm
+
+MCdm<-as.data.frame(MCdm)
+MCdm$sort<-row.names(MCdm)
+MCdm <- MCdm[order(MCdm$sort),]#sort row order
+MCdm$sort<-NULL
+MCdm<-MCdm[,order(names(MCdm))]#sort column order
+MCdm<-as.matrix(MCdm)
+
+#Second sort GeoDist
+GeoDistMathm<-as.data.frame(GeoDistMathm)
+GeoDistMathm$sort<-row.names(GeoDistMathm)
+GeoDistMathm <- GeoDistMathm[order(GeoDistMathm$sort),]#sort row order
+GeoDistMathm$sort<-NULL
+GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
+GeoDistMathm<-as.matrix(GeoDistMathm)
+
+heatmap(GeoDistMathm)
+geoclust<-hclust(GeoDistMat)
+plot(geoclust)
+
+hist(larv$nestdist)
+larv1<-larv#save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
+```
+Now that these various matrices, class 'dist' objects are created we can proceed for plot.
+
+###Plot and Correlate genetic and geographic distance matrices
+
+First a regression model is calculated and then the plot:
+```{r "Plots_and_Correlation", echo=TRUE}
+#Linear Regression Model
+reg=lm(MCdm[lower.tri(MCdm)]~GeoDistMathm[lower.tri(GeoDistMathm)])
+summary(reg)
+plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
+abline(reg)
+# Correlations with significance levels
+rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])#(x, type="pearson") # type can be pearson or spearman
+
+#ANOVA
+anova(reg)
+#Plot residuals
+par(mfrow=c(2,2))
+plot(reg)
+```
+
+So there is some small but significant correlation between genetic distance and geographic distance in the Murray cod sampled. 
+
+###Mantel Test
+
+```{r "Mantel_Test", echo=TRUE}
+mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 9999)
+mant
+#Check all is in order
+as.matrix(GeoDistMathm)[1:5, 1:5]
+as.matrix(MCdm)[1:5, 1:5]
+```
+Based on these results, we can reject the null hypothesis that these two matrices, spatial distance and genetic distance, are unrelated with alpha = `r mant$pvalue`.  The observed correlation, `r mant$obs`, suggests that the matrix entries are positively associated.  This means that smaller differences in genotype are generally seen among pairs of larvae that are from nests estimated to be geographically close to each other, rather than nests which are estimated to be further away from each other. Note that since this test is based on random permutations, the code will always arrive at the same observed correlation but rarely at exactly the same p-value. 
+
+The most likely positon of nests as estimated based on the best estimate of larval drift can now be mapped onto the river topology.
+
+##Siblings and What they can tell us about Larval Dispersal
+The identification of various sibling pairs and groups in the data (they can be seen in the bottom left of the genetic distance v. distance scatterplot) can potentially be useful in exploring some angles of larval dispersal. For example do siblings dispere in schools or alone? How long does the hatch period in the wild last? It is known in hatcheries to last x days but not in the wild. Siblings also facilitate accurate allocation of larvae to nest because, by definition, they come from the same nest. If siblings appear between years  then this would suggest repeat adult pairings over years. To date we do not know if this happens.
+
+```{r echo=FALSE}
+read_chunk('siblingAnalysis.R')
+```
+
+```{r siblingAnalysisGo, echo=TRUE}
+<<siblingAnalysis>>
+```
+##Discussion (points only)
+
+##Code Chunks in this Document
+
+```{r "Include_Chunk_Labels_and_Session Information"}
+all_labels()
+
+#Session Information
+sessionInfo()
+
+```

@@ -1,0 +1,85 @@
+
+---
+title: "Chapter 6 Upper Murrumbidgee Cod Nests Distribution"
+author: "Alan Couch"
+date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
+output: word_document
+---
+
+
+```{r, "Project_Template_and_Knitr", echo=FALSE, warning=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
+
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+This document includes methods, results and possibly some discussion dot points for the nest distribution chapter.  
+
+```{r "LoadLibraries", echo=TRUE}
+source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
+library(ggplot2)
+library(ggdendro)
+library(ape)
+library(dendextend)
+library(Hmisc)
+library(ade4)
+```
+
+##Methods
+
+##Results
+
+###Look at Clades Over the River Reach
+
+The clades distribution over the river reach suggests some structure.
+```{r "Clades_and_Location", echo =TRUE}
+dispersalVelocity<-1200
+
+larv1<-merge(larv,qslGeneticsForNestChapter, by.x="LarvalID", by.y="LarvaID")
+rownames(CladeNamesToMerge) <- CladeNamesToMerge[,1]
+CladeNamesToMerge$Label<-rownames(CladeNamesToMerge)
+larv2<-merge(larv1,CladeNamesToMerge, by="Label")
+larv2<-merge(larv2,qslAgeData, by.x="LarvalID", by.y="LarvaID")
+# To create a distance using the previously calculated best estimate of drift velocity (m/d available since leaving brood care)
+larv2$nestdist<-larv2$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv2$Day.of.Year-(larv2$hatchDoY+7))) #this should come from DB perhaps
+
+plot(larv2$nestdist,larv2$clade, xlab="Nest Distance (m)", ylab = "Clade")
+
+plot2 <- ggplot(larv2, aes(nestdist,clade))
+plot2 + geom_point(alpha = 2/3) +geom_boxplot()+labs(title = "Clades Nests and their Position on River")+ labs(x="Nest Location") +labs(y = "Clade")+ theme(axis.text.x=element_text(angle=90))
+```
+
+
+
+
+##Discussion (points only)
+This suggests that all clades except one (hT1) exist below a barrier around 10000m but that only three clades (hM1,hL1 and hK2)  exist above and below this barrier. On possible explanation that might be inferred from this is that adults migrating upstream for spawning are prevented from doing so by a barrier between the 5000 and 15000m mark but that larvae produced above the barrier are able to disperse and so are represented downstream. It is noteable that the barrier and the big gap in apparent nests from 6000m to 14000m corresponds with the Tharwa sand slug - a long stretch of sand that has previously been the subject of remedial work because it has been believed to be a barrier to cod migration (ref).
+
+![Nest Along the River](../images/Dashboard1.jpg)
+
+```{r sumMatricesToFindNests}
+read_chunk('sumMatricesToFindNests.R')
+```
+
+```{r sumMatricesToFindNestsGo, echo=TRUE}
+<<sumMatricesToFindNests>>
+```
+
+
+##Code Chunks in this Document
+
+```{r "Include_Chunk_Labels_and_Session Information"}
+all_labels()
+
+#Session Information
+sessionInfo()
+
+```
