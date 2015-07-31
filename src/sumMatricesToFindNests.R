@@ -9,7 +9,7 @@ require(clusterSim) # to allow data normalization
 
 #Create Hatch DoY and then Temporal Distance Matrix
 
-temporalDistance<-data.frame(larv$Label,(larv$Day.of.Year-(74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361)))
+temporalDistance<-data.frame(larv2$Label,(larv2$Day.of.Year-(larv2$ageOL)))
 colnames(temporalDistance)[2] <- "hatchDoY"
 colnames(temporalDistance)[1] <- "label"
 row.names(temporalDistance)<-temporalDistance$label
@@ -28,14 +28,14 @@ temporalDistance<-dist(temporalDistance)
 # Create Spatial Distance Matrix based on Best Nest Estimate as previously determined via Iterated Mantel.
 #spatialDistance<-data.frame(larv$Label,(larv$Distance.to.Angle.Crossing..m.-(bestNestEst*(larv$Day.of.Year-((larv$Day.of.Year-(74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361)))+7))))
 
-spatialDistance<-data.frame(larv$Label,(larv$Distance.to.Angle.Crossing..m.-(BestNestEst*(larv$Day.of.Year-((larv$Day.of.Year-(35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967)))+7))))
+spatialDistance<-data.frame(larv2$Label,(larv2$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv2$Day.of.Year-((larv2$Day.of.Year-(larv2$ageOL)))+7))))
 
 geneticDistance<-MCsnps[-c(1:7),] # so there are 86 entries.
 row.names(spatialDistance)<-spatialDistance[,1]
 df<-merge(spatialDistance, geneticDistance, by="row.names")
 df<-df[,2:3]
-row.names(df)<-df$larv.Label
-df$larv.Label<-NULL
+row.names(df)<-df$larv2.Label
+df$larv2.Label<-NULL
 spatialDistance<-df
 
 #Make the Actual Spatial Distance Matrix

@@ -25,10 +25,10 @@ withSibDF<-as.data.frame(withSibDF) #make back to a df
 
 ##Now to see how many days between hatch of sibs.
 
-withSib2<-subset(larv, select=c(Label,hatchdoy)) #get labels and hatch DoY
+withSib2<-subset(larv, select=c(Label,hatchDoY)) #get labels and hatch DoY
 withSib2<-withSib2[withSib2$Label %in% withSib,] #reduce df to the siblings only
 
-#row.names(withSib2)<-withSib2[,2] #make label row names for making distance matrix
+row.names(withSib2)<-withSib2[,1] #make label row names for making distance matrix
 withSib2$Label<-NULL #tidy up redundant
 
 #Then to make a distance matrix.
@@ -63,8 +63,10 @@ write.csv(format(sibsHatchDiffMeans), file="sibsHatchDiffMeans.csv")
 
 #Describe and Plot Summary Statistics regading the difference in hatch day-of-year between siblings
 describe(sibsHatchDiffMeans)
+sibsHatchDiffMeans
+names(sibsHatchDiffMeans)[names(sibsHatchDiffMeans)=="colMeans(sibsHatchDiff, na.rm = TRUE)"] <- "colM"
+hist(sibsHatchDiffMeans$colM,breaks = 25, col = "lightblue", border = "pink")
 
-hist(sibsHatchDiffMeans,breaks=seq(0,5,l=8),freq=FALSE,col="orange",main="Histogram", xlab="x",ylab="f(x)",yaxs="i",xaxs="i")
 #So the three objective have been achieved. 
 #       1. What duration is hatching in wild nests? Description above showns mean etc.
 #       2. Create a list of larvae with siblings (withSibsDF) done

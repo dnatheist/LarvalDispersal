@@ -15,11 +15,11 @@ library(ade4)
 #
 #
 
-#larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
-larv$ageOL<- 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967
-larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
-larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
-larv$spawn<-larv$hatchdoy-larv$incTime
+
+#larv$ageOL<- 0.0591584*larv$MeanOtolithLength + 0.0331233
+#larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
+#larv$incTime<-20.67-0.667*larv$WaterTempMean
+#larv$spawn<-larv$hatchdoy-larv$incTime
 #larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(0*(larv$Day.of.Year-(larv$hatchdoy+7)
                                                        
 #Create a MCsnps set with row names as a column.
@@ -41,7 +41,7 @@ itmant <- matrix(nrow=5000, ncol=3) #Is 5000 DF to store result but NA omited la
 #Iteration begins here:
 for (nd in seq(1,5000, by=100)){#To be 0:5000 eventually for(i in seq(1, 10, by = 2)) 
 
-larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(nd*(larv$Day.of.Year-(larv$hatchdoy+7)))  
+larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(nd*(larv$Day.of.Year-(larv$hatchDoY+7)))  
 
 ###########
 # Create GenDist from code in the Murray Cod SNPS table
@@ -107,6 +107,6 @@ mtext("Correlation", side=2, line=3.7, cex=1.5)
 
 ###########
 
-BestNestEst<- subset(itmantdf, V2==max(V2) , select = V1)
-BestNestEst<-as.numeric(BestNestEst)
+dispersalVelocity<- subset(itmantdf, V2==max(V2) , select = V1)
+dispersalVelocity<-as.numeric(dispersalVelocity)
 

@@ -42,7 +42,7 @@ library(ade4)
 
 This section is to add some calculated variables to the data. In particular to add:
  
-  Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361 (Days)
+  Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361 (Days) (actually 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967)
   
   Hatch date:  [Day of Year Caught]-[Age From Otolith Length] (Day of the Year - DoY)
   
@@ -54,9 +54,9 @@ These additional parameters will be used to estimate distances that the larvae h
 
 ```{r "Additional_Calculations", echo="TRUE"}
 
-larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
+larv$ageOL<- 0.0591584*larv$MeanOtolithLength + 0.0331233
 larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
-larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
+larv$incTime<-20.67-0.667*larv$WaterTempMean
 larv$spawn<-larv$hatchdoy-larv$incTime
 
 larv[c(20:30),c(119:122)] #just to see all OK
@@ -121,6 +121,20 @@ cladeNo[c(20:30),] #The clades are numbered by default. So I need to name them s
 
 ```
 
+Extract three higher level clades
+```{r "extractRaceClades", echo=TRUE}
+dend2 <- color_labels(MChc, k = 3)#Use h or k
+raceCladeNumber<-cutree(dend2,k=3) #This is like using:dendextend:::cutree.dendrogram(dend1,h=70) h or k can be specified
+raceCladeNumber<-as.data.frame(raceCladeNumber)
+raceCladeNumber[,] #The clades are numbered by default. So I need to name them something sensible for subsequent analysis.
+
+#Merge clade and raceClade numbers into one data frame
+larvalClades<-merge(cladeNo,raceCladeNumber, by="row.names")
+#Add Clade Names
+
+```
+
+
 ###Trout Cod Larvae
 
 Although Trout cod and hybrid data are excluded from further analysis, the heatmap and dendrogram are provided here for completness. In any case it is not an insignificant finding that the two species do in fact hybridise in this natural riverine environment even though hybrids have been seen in hatcheries and impoundments previoulsy. Furthermore this is the first time fertile F1 have been recorded as evidenced by the finding of an F2 hybrid. That said there is some question as to the providence of the Trout cod in this case as they were believe extirpated and restocked too recently (2006?) for 2 generations to have occured. FACT check this.
@@ -155,7 +169,7 @@ read_chunk('IteratedMantel.R')
 ```{r first, echo=TRUE}
 <<IM>>
 ```
-In this case it is the distance above the collection site if the larvae 'drift' `r BestNestEst` metres per day between leaving the nest and being collected at sampling site. 
+This term BestNestEst shoud actually be be larval dispersal velocity. Also should use term PLD (pelagic larval dispersal) In this case it is the distance above the collection site if the larvae 'drift' `r BestNestEst` metres per day between leaving the nest and being collected at sampling site. 
 
 Of course it is important to keep in mind this is an average for larvae along the entire river reach. It is most likely a  distribution of larvae drifting varying distances below the nest. The obvious thing to do would be to take the approach on a site by site basis over a number of years, because the river speeds vary at each site and between years but at present there are too few samples from most sites and other years to use such an approach with confidence.
 
@@ -186,6 +200,7 @@ MCdm <- dist(MCdm)
 MCdm<-as.matrix(MCdm)
 MCdm<-as.data.frame(MCdm)
 #This is to be used for plotting
+MCdmForSibs<-MCdm #need this matrix for sibling analysis .r
 ###########
 
 geodist<-data.frame(larv$Label,larv$nestdist)
@@ -265,7 +280,7 @@ The most likely positon of nests as estimated based on the best estimate of larv
 The clades distribution over the river reach suggests some structure.
 ```{r "Clades_and_Location", echo =TRUE}
 
-
+#need to also output raceclades [done at 126 earlier] - although created no outputs yet for db or names (pondi etc.)
 larv1<-merge(larv,cladeNo, by="row.names")
 rownames(CladeNamesToMerge) <- CladeNamesToMerge[,1]
 CladeNamesToMerge$Label<-rownames(CladeNamesToMerge)
