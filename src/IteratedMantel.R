@@ -6,21 +6,12 @@ library(ade4)
 #This file is to calculate the data as before but mainly to iterate the mantel test from 1 to 5000 metres at 100m increments (to save time).
 
 # The calculations that can happen outside the iteration are:
-#  
-  #Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361
+
+  #Age from Otolith Length: 0.0591584*larv$MeanOtolithLength + 0.0331233
   #Hatch DoY :  [Day of Year Caught]-[Age From Otolith Length]
   #Incubation: 20.67-0.667*[WaterTemp(DegC) Mean]
   #Spawnin:[Hatch]-[Incubation]
-  #larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(300*(larv$Day.of.Year-(larv$hatchdoy+7)))
-#
-#
-
-
-#larv$ageOL<- 0.0591584*larv$MeanOtolithLength + 0.0331233
-#larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
-#larv$incTime<-20.67-0.667*larv$WaterTempMean
-#larv$spawn<-larv$hatchdoy-larv$incTime
-#larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(0*(larv$Day.of.Year-(larv$hatchdoy+7)
+  #larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(300*(larv$Day.of.Year-(larv$hatchDoY+7)))
                                                        
 #Create a MCsnps set with row names as a column.
 MCchecklist<-row.names(MCsnps)
