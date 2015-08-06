@@ -62,14 +62,14 @@ rm(df)
 ```
 Number of unique Maccullochella snps analysed in the DaRT sequences was `r length(uniqueSNPS)-2`. This provide high resolution of the genotypes of the larvae. The base pairs that had mutated we as follows:
               Became      
-Was |   A	|  C  |  G	|  T  | Totals|
-----|-----|-----|-----|-----|--------
-A		|     |424	|1629	|422	|2475   |
-C	  |491	|     |447	|1893	|2831   |
-G	  |1790	|432	|     |541	|2763   |
-T	  |457	|1570	|442	|     |2469   |
-----|-----|-----|-----|-----|--------
-Tot |2738	|2426	|2518	|2856	| 10538 | of 21076 
+Was |   A |  C  |  G  |  T  | Totals|
+----|-----|-----|-----|-----|-------|
+A   |     |424  |1629 |422  |2475   |
+C   |491  |     |447  |1893 |2831   |
+G   |1790 |432	|     |541  |2763   |
+T   |457  |1570	|442  |     |2469   |
+----|-----|-----|-----|-----|-------|
+Tot |2738 |2426	|2518 |2856 | 10538 | of 21076 
 
 The polymorphisms examined included SNPs and small indels in restriction enzyme recognition sites, and larger insertions/deletions in restriction fragments. The polymorphism selected for genotyping were all snps. 
 
@@ -80,7 +80,7 @@ plot(polymorphismPositionHistogram)
 ```
 
 ```{r}
-#started to regex etc to pulls a,c,t,g for counts but stopped. Code here just in case I come back to it. I didit in excel so table above may do.
+#started to regex etc to pulls a,c,t,g for counts but stopped. Code here just in case I come back to it. I did it in excel so table above may do.
 #dfBPchange<-df$X..3
 #dfBPchange<-dfBPchange[-c(1:5)]
 #head(dfBPchange)
@@ -128,7 +128,8 @@ The distance matrix suggests a very low genetic diversity in the population of M
 
 #Colour Dendrogram
 #A2Rplot(MChc, k = 12, boxes = FALSE, col.up = "gray50")
-dend1 <- color_labels(MChc, k = 12)#Use h or k
+dend1 <- color_branches(MChc, k = 12)
+dend1 <- color_labels(dend1, k = 12)#Use h or k
 plot(dend1, main="Maccullochella peelii Larvae")
 ```
 
@@ -157,6 +158,7 @@ larvalClades$Row.names<-NULL
 #Add Clade Names
 #So the list of larval clades (two levels) is:
 larvalClades
+
 ```
 
 
@@ -191,7 +193,7 @@ read_chunk('IteratedMantel.R')
 ```
 
 
-```{r first, echo=TRUE}
+```{r first, echo=TRUE,cache=TRUE}
 <<IM>>
 ```
 The distance above the collection site as the larvae disperse at `r dispersalVelocity` metres per day between leaving the nest and being collected at sampling site also allows an estimate of the Murray cod pelagic larval drift duration to be made.
