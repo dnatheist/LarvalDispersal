@@ -60,6 +60,7 @@ weightedSummedMatrices<- (data.Normalization (as.matrix(spatialDistance),type="n
 plot(hclust(as.dist(weightedSummedMatrices)), main="Clade Weighted Summed Matrices")
 
 #pam medoid clustering
+#http://www.stat.berkeley.edu/~spector/s133/Clus.html for interpretation
 
 require(cluster)
 wsm.pam <- pam(weightedSummedMatrices,12)
