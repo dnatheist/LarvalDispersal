@@ -7,12 +7,12 @@ library(ade4)
 
 # The calculations that can happen outside the iteration are:
 
-  #Age from Otolith Length: 0.0591584*larv$MeanOtolithLength + 0.0331233
-  #Hatch DoY :  [Day of Year Caught]-[Age From Otolith Length]
-  #Incubation: 20.67-0.667*[WaterTemp(DegC) Mean]
-  #Spawnin:[Hatch]-[Incubation]
-  #larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(300*(larv$Day.of.Year-(larv$hatchDoY+7)))
-                                                       
+#Age from Otolith Length: 0.0591584*larv$MeanOtolithLength + 0.0331233
+#Hatch DoY :  [Day of Year Caught]-[Age From Otolith Length]
+#Incubation: 20.67-0.667*[WaterTemp(DegC) Mean]
+#Spawnin:[Hatch]-[Incubation]
+#larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(300*(larv$Day.of.Year-(larv$hatchDoY+7)))
+
 #Create a MCsnps set with row names as a column.
 MCchecklist<-row.names(MCsnps)
 MCchecklist<-as.data.frame(MCchecklist)# 93 records
@@ -31,53 +31,53 @@ itmant <- matrix(nrow=5000, ncol=3) #Is 5000 DF to store result but NA omited la
 
 #Iteration begins here:
 for (nd in seq(1,5000, by=100)){#To be 0:5000 eventually for(i in seq(1, 10, by = 2)) 
-
-larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(nd*(larv$Day.of.Year-(larv$hatchDoY+7)))  
-
-###########
-# Create GenDist from code in the Murray Cod SNPS table
-MCdm<-MCsnps[-c(1:7),] #remove non-numeric variables
-MCdm <- dist(MCdm) # Create a Murray Cod distance matrix
-MCdm<-as.matrix(MCdm)
-MCdm<-as.data.frame(MCdm)
-#This is to be used for plotting
-###########
-#Create Geographic Distance Matrix using Nest Distance
-geodist<-data.frame(larv$Label,larv$nestdist)
-row.names(geodist)<-geodist[,1]
-geodist$larv.Label<-NULL
-geodist<-na.omit(geodist)
-#geodist<-geodist[complete.cases(geodist),]
-
-GeoDistMat<-dist(geodist)
-GeoDistMathm <- as.matrix(GeoDistMat)
-
-
-#make sure both matrices are in correct order - rows and cols
-#First sort MCdm
-
-MCdm<-as.data.frame(MCdm)
-MCdm$sort<-row.names(MCdm)
-MCdm <- MCdm[order(MCdm$sort),]#sort row order
-MCdm$sort<-NULL
-MCdm<-MCdm[,order(names(MCdm))]#sort column order
-MCdm<-as.matrix(MCdm)
-
-#Second sort GeoDist
-GeoDistMathm<-as.data.frame(GeoDistMathm)
-GeoDistMathm$sort<-row.names(GeoDistMathm)
-GeoDistMathm <- GeoDistMathm[order(GeoDistMathm$sort),]#sort row order
-GeoDistMathm$sort<-NULL
-GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
-GeoDistMathm<-as.matrix(GeoDistMathm)
-
-mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 9999)
-#print(nd)
-#print(mant$obs)
-#print(mant$pvalue)
-
- itmant[nd,] <- c(nd, mant$obs, mant$pvalue)
-  }
+        
+        larv$nestdist<-larv$Distance.to.Angle.Crossing..m.-(nd*(larv$Day.of.Year-(larv$hatchDoY+7)))  
+        
+        ###########
+        # Create GenDist from code in the Murray Cod SNPS table
+        MCdm<-MCsnps[-c(1:7),] #remove non-numeric variables
+        MCdm <- dist(MCdm) # Create a Murray Cod distance matrix
+        MCdm<-as.matrix(MCdm)
+        MCdm<-as.data.frame(MCdm)
+        #This is to be used for plotting
+        ###########
+        #Create Geographic Distance Matrix using Nest Distance
+        geodist<-data.frame(larv$Label,larv$nestdist)
+        row.names(geodist)<-geodist[,1]
+        geodist$larv.Label<-NULL
+        geodist<-na.omit(geodist)
+        #geodist<-geodist[complete.cases(geodist),]
+        
+        GeoDistMat<-dist(geodist)
+        GeoDistMathm <- as.matrix(GeoDistMat)
+        
+        
+        #make sure both matrices are in correct order - rows and cols
+        #First sort MCdm
+        
+        MCdm<-as.data.frame(MCdm)
+        MCdm$sort<-row.names(MCdm)
+        MCdm <- MCdm[order(MCdm$sort),]#sort row order
+        MCdm$sort<-NULL
+        MCdm<-MCdm[,order(names(MCdm))]#sort column order
+        MCdm<-as.matrix(MCdm)
+        
+        #Second sort GeoDist
+        GeoDistMathm<-as.data.frame(GeoDistMathm)
+        GeoDistMathm$sort<-row.names(GeoDistMathm)
+        GeoDistMathm <- GeoDistMathm[order(GeoDistMathm$sort),]#sort row order
+        GeoDistMathm$sort<-NULL
+        GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
+        GeoDistMathm<-as.matrix(GeoDistMathm)
+        
+        mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 9999)
+        #print(nd)
+        #print(mant$obs)
+        #print(mant$pvalue)
+        
+        itmant[nd,] <- c(nd, mant$obs, mant$pvalue)
+}
 
 itmant<-na.omit(itmant)
 itmantdf<-as.data.frame(itmant)

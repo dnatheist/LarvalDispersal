@@ -54,6 +54,7 @@ for (nn in famNo){
 }
 plot(final$nestSeg,as.factor(final$nestID))
 nrow(as.data.frame(unique(final$nestID)))
+
 #Output a file
 #write.csv(ndDF, file="ndDF.csv")
 
