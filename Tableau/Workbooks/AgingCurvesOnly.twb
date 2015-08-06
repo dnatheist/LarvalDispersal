@@ -384,13 +384,10 @@
         </title>
         <caption>
           <formatted-text>
-            <run>﷐</run>
-            <run bold='true' fontcolor='#000000'>Equation:</run>
-            <run fontcolor='#000000'>EKnown Age = 0.0591584*Mean Otolith Length + 0.0331233﷐</run>
-            <run bold='true' fontcolor='#000000'>P-value:</run>
+            <run bold='true' fontcolor='#000000'>Equation: </run>
+            <run fontcolor='#000000'>Known Age = 0.0591584*Mean Otolith Length + 0.0331233</run>
+            <run bold='true' fontcolor='#000000'>&#10;P-value:</run>
             <run fontcolor='#000000'>P&lt; 0.00011</run>
-            <run fontcolor='#000000' fontname='Segoe UI'>\x0;</run>
-            <run>Otolith Length vs. Known Age.  Color shows details about Species (group). The data is filtered on Mean Otolith Length, which ranges from 40 to 401.</run>
           </formatted-text>
         </caption>
       </layout-options>
