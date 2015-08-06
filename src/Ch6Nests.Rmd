@@ -30,7 +30,7 @@ library(dendextend)
 library(Hmisc)
 library(ade4)
 ```
-***
+
 ##Methods
 
 ##Results
@@ -62,7 +62,7 @@ plot2 + geom_point(alpha = 2/3) +geom_boxplot()+labs(title = "Clades Nests and t
 
 ![Nest Along the River](../images/Dashboard1.jpg) # needs updating in Tableau to ensure commensurate with r.
 
-***
+
 ```{r sumMatricesToFindNests}
 read_chunk('sumMatricesToFindNests.R')
 ```
