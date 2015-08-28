@@ -145,6 +145,7 @@ ChemAnal0<-ChemAnal0[-26,] # an extreme B outlier that was missed at data clean
 ChemAnalAll4<-rbind(ChemAnal0,ChemAnalCore,ChemAnalE1,ChemAnalE2)
 ChemAnalNonCore<-rbind(ChemAnal0,ChemAnalE1,ChemAnalE2)
 
+rm(EachOtoData) #clean up last temporary file added line 20/8/2015
 
 
 
