@@ -17,11 +17,13 @@ sibsSubset<-sibsLogical*sibsSubset #This turns to 0 all the genetic similarity a
 sibsSubset<-sibsSubset[!sapply(sibsSubset, function(x) all(x == 0))] #now remove those with no sibs
 sibsLogical<-sibsSubset>0
 
-#Make a list (data frame) with names 
+#Make a list (data frame) with names of those with sibs (same nest)
 withSib<-row.names(sibsSubset) #make a list of those with sibs
 withSibDF<-as.data.frame(withSib)
 row.names(withSibDF)<-withSibDF[,1] # Make sensible row names (larva labels)
 withSibDF<-as.data.frame(withSibDF) #make back to a df
+
+#Elsewhere I have Make a list (data frame) with names of those withOUT sibs (as each means must be a different NestID)
 
 ##Now to see how many days between hatch of sibs.
 
@@ -51,8 +53,8 @@ sibsLogical<-sibsLogical[,order(names(sibsLogical))]#sort column order
 sibsLogical<-as.matrix(sibsLogical)
 ####
 
-sibsHatchDiff<-sibsLogical*withSibDM2
-sibsHatchDiff[sibsHatchDiff == 0] <- NA
+sibsHatchDiff<-sibsLogical*withSibDM2  # need half the triangle here? as mean lowered otehrwise?
+sibsHatchDiff[sibsHatchDiff == 0] <- NA 
 sibsHatchDiffMeans<-as.data.frame(colMeans(sibsHatchDiff, na.rm=TRUE))
 
 #Get rid of NAs
@@ -63,7 +65,7 @@ write.csv(format(sibsHatchDiffMeans), file="sibsHatchDiffMeans.csv")
 
 #Describe and Plot Summary Statistics regading the difference in hatch day-of-year between siblings
 describe(sibsHatchDiffMeans)
-sibsHatchDiffMeans
+#sibsHatchDiffMeans # was just printed for validation
 names(sibsHatchDiffMeans)[names(sibsHatchDiffMeans)=="colMeans(sibsHatchDiff, na.rm = TRUE)"] <- "colM"
 hist(sibsHatchDiffMeans$colM,breaks = 25, col = "lightblue", border = "pink")
 
