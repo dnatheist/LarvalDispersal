@@ -1,5 +1,7 @@
 #This file is to generate names for nests. By making rules to do it based only on location and day of hatch I can then compare to siblings list. This should give and idea of error maybe.
 
+#First run I used first letter of catch site name between distance and hatch day. Probably better off using a letter representing the year. 11,12,13 el,tw,th (or en,te,tn) perhaps.
+
 # I suppose this is actually a classification problem. Perhaps should treat as such, do confusion matrix etc.
 
 
