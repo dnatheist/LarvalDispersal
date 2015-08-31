@@ -1,0 +1,27 @@
+---
+title: "ChZTroutCodAppendix"
+author: "Alan Couch"
+date: "18 August 2015"
+output: word_document
+---
+
+###Trout Cod Larvae
+
+Although Trout cod and hybrid *Maccullochella* data are excluded from further analysis, the heatmap and dendrogram are provided here for completeness. In any case it is not an insignificant finding that the two species do in fact hybridise in this natural riverine environment even though hybrids have been seen in hatcheries and impoundments previoulsy. Furthermore this is the first time fertile F1 have been recorded as evidenced by the finding of an F2 hybrid. That said there is some question as to the providence of the Trout cod in this case as they were believe extirpated and restocked too recently (2006?) for 2 generations to have occured. FACT check this.
+```{r, "Trout_Cod_Dendrograms", echo=TRUE}
+#A heatmap and dendrogram for Trout Cod shows three distinct clades.
+TCdm <- dist(TCsnps)
+#Heat map
+dataMatrix <- as.matrix(TCdm)
+heatmap(dataMatrix, main="Trout Cod Heat Map")
+#cluster
+TChc <- hclust(TCdm)
+#Plot it
+#plot(TChc, main="Maccullochella macquariensis larvae")
+A2Rplot(TChc, k =3, boxes = FALSE, col.up = "gray50",main = "Maccullochella macquariensis larvae")
+
+```
+Both the heatmap and dendrogram for Trout Cod shows three distinct clades.
+
+##Discussion (points only)
+* It will be interesting to mito-sequence the trout cod and determine the species of the male and female parent. It is likely that that the female is the Trout cod in the mating pair given the scarcity of trout cod compared with Murray cod and the mate pressure that must exist. 

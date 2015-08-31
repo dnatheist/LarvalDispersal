@@ -149,8 +149,8 @@ for (nn in famNo){
         final<-rbind(final,newsub)
         }
 
-#Now to calculate the furtherst potential settling distance if they moved at average for more of their remaining drift days.
-larv$potentialSettlingDistance<-larv$Distance.to.Angle.Crossing..m.+(20-larv$ageOL)*1200
+#Now to calculate the largest potential settling distance if they moved at mean dispersal velocity for more of their remaining drift days.
+larv$potentialSettlingDistance<-larv$Distance.to.Angle.Crossing..m.+(20-larv$ageOL)*dispersalVelocity
 
 ######################################################################################
 
@@ -167,7 +167,7 @@ larv_intersection <- larv[larv$Label %in% MCchecklist$MCchecklist,]
 #Thanks: https://heuristically.wordpress.com/2009/10/08/delete-rows-from-r-data-frame/
 
 larv<-larv_intersection
-larv_intersection<-NULL
+rm(larv_intersection)
 
 ######################################################################################
 

@@ -1,6 +1,7 @@
 #Linear Model based on most important elements. Need to confirm that these are the most Important Variables before finilasation.
 require(MASS)
 require(mvoutlier)
+require(clusterSim)
 
 ImportantVars<-ChemAnalCore
 ImportantVars<-ImportantVars[c(107,13,14,15,121,122,127,131,139)]
