@@ -1,5 +1,5 @@
 ---
-title: "Chapter 5 Genomics and Larval Dispersal Analysis"
+title: "Chapter 5: Genetic Spatial Structure in Murray Cod"
 author: "Alan Couch"
 date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
 output: word_document
@@ -42,6 +42,11 @@ library(ade4)
  Clades and r apps.
  
  DaRT as described...
+ 
+ PCR would bias representation. p67 LFC
+ 
+ Wilmott Skill Metrioc p.60 LFC - any relevence?
+ 
 ```{r}
 #larvNoAge<-larv #prob redundant
 larv<-merge(larv,qslAgeData,by.x="LarvalID", by.y="LarvaID")
@@ -54,11 +59,8 @@ larv<-merge(larv,qslAgeData,by.x="LarvalID", by.y="LarvaID")
 Dart sequencing on Next Generation Sequencing (NGS) platforms was used to reduce genome complexity allowing an intelligent selection of genome fraction corresponding predominantly to active genes. This selection is achieved through the use of a combination of Restriction Enzymes which separate low copy sequences (most informative for marker discovery and typing) from the repetitive fraction of the genome. The advantage of DArTseq is the very high marker densities (tens of thousands of markers) which allows high resolution mapping and detailed genetic dissection of traits. 
 
 ```{r }
-df<-CopyOfDMac14.1567snps
-uniqueSNPS<-unique(df$X..1)
-polymorphismPositionHistogram<-hist(as.numeric(df$X..4)) #a plot of the relative position of the polymorphism along the 69 base pair fragment of DNA.
-lengthDNA<-median(as.numeric(nchar(as.character(df$X..2))))
-rm(df)
+uniqueSNPS<-unique(CopyOfDMac14.1567snps$X..1)
+lengthDNA<-median(as.numeric(nchar(as.character(CopyOfDMac14.1567snps$X..2))))
 ```
 Number of unique Maccullochella snps analysed in the DaRT sequences was `r length(uniqueSNPS)-2`. This provide high resolution of the genotypes of the larvae. The base pairs that had mutated we as follows:
               Became      
@@ -76,16 +78,23 @@ The polymorphisms examined included SNPs and small indels in restriction enzyme 
 The length of the fragments of DNA in this sequencing was `r lengthDNA` base pairs. The position of the polymorphism along the 69 base pair DNA fragment can be seen in the following histogram
 
 ```{r}
-plot(polymorphismPositionHistogram)
+polymorphismPositionHistogram<-hist(as.numeric(CopyOfDMac14.1567snps$X..4),main= "Histogram of SNP Position in 69 Base Pair Fragment", xlab="SNP Position on Fragment - BIN", breaks = 13, col = "lightblue", border = "pink") #a plot of the relative position of the polymorphism along the 69 base pair fragment of DNA.
+#plot(polymorphismPositionHistogram)
 ```
 
 ```{r}
-#started to regex etc to pulls a,c,t,g for counts but stopped. Code here just in case I come back to it. I did it in excel so table above may do.
-#dfBPchange<-df$X..3
-#dfBPchange<-dfBPchange[-c(1:5)]
-#head(dfBPchange)
-#dfBPchange<-as.data.frame(dfBPchange)
-#gsub(".*:","",dfBPchange$dfBPchange) #remove all position numbers before th3e ':'
+#regex etc to pulls a,c,t,g for counts.
+dfBPchange<-CopyOfDMac14.1567snps$X..3
+dfBPchange<-dfBPchange[-c(1:5)]
+head(dfBPchange)
+dfBPchange<-as.data.frame(dfBPchange)
+dfBPchange<-gsub(".*:","",dfBPchange$dfBPchange) #remove all position numbers before the ':'
+#dfBPchange<-gsub(" ","",dfBPchange$dfBPchange) #remove all spaces
+dfBPchange<-as.data.frame(dfBPchange)
+dfBPchange<-dfBPchange[!(dfBPchange$dfBPchange==""), ]
+dfBPchange<-as.data.frame(dfBPchange)
+table(dfBPchange)
+# Preferably display as a cross tab.
 ```
 
 
@@ -97,13 +106,13 @@ A dendrogram of all the larvae allows examination of the relationships between a
 
 MacDm <- dist(allsnps) #Create a distance matrix for all Maccullochella larvae
 
-heatmap(as.matrix(MacDm)) #Make a heat map
+#heatmap(as.matrix(MacDm)) #Make a heat map
 
 MacHC <- hclust(MacDm) #make a heirarchical cluster
 
 plot(color_labels(MacHC, k = 5), main="All Maccullochella Larvae") #Plot the cluster dendrogram
 ```
-As it turns out there are multiple *Maccullochella* species. All the larvae collected fall into one of four distinct clades. The above dendrograms shows all larvae (mostly Murray cod) and two known Trout cod controls, and what appears to be F1 and F2 hybrids between the two species. There were 4 hybrid and no pure trout cod larvae detected in the 92 larvae caught and sequenced from the river.
+As it turns out there are multiple *Maccullochella* species. All the larvae collected fall into one of four distinct clades. The above dendrograms shows all larvae (mostly Murray cod) and two known Trout cod controls, and what appears to be F1 and F2 hybrids between the two species. There were 4 hybrid and no pure trout cod larvae detected in the 92 larvae caught and sequenced from the river. This is an interesting finding and detail can be found in the Trout Cod Appendix if the reader is interested.
 
 So we now use the set with the non-Murray cod removed to identify Murray cod clades and conduct the remainder of the analysis on the Upper Murrumbidgee Murray cod larvae only.  The Trout cod and the hybrids are easily identified and eliminated from the data to ensure we are looking only at the Murray cod larvae.
 
@@ -157,34 +166,18 @@ larvalClades$Row.names<-NULL
 
 #Add Clade Names
 #So the list of larval clades (two levels) is:
-larvalClades
+#larvalClades
 
 ```
 
 
-###Trout Cod Larvae
 
-Although Trout cod and hybrid *Maccullochella* data are excluded from further analysis, the heatmap and dendrogram are provided here for completeness. In any case it is not an insignificant finding that the two species do in fact hybridise in this natural riverine environment even though hybrids have been seen in hatcheries and impoundments previoulsy. Furthermore this is the first time fertile F1 have been recorded as evidenced by the finding of an F2 hybrid. That said there is some question as to the providence of the Trout cod in this case as they were believe extirpated and restocked too recently (2006?) for 2 generations to have occured. FACT check this.
-```{r, "Trout_Cod_Dendrograms", echo=TRUE}
-#A heatmap and dendrogram for Trout Cod shows three distinct clades.
-TCdm <- dist(TCsnps)
-#Heat map
-dataMatrix <- as.matrix(TCdm)
-heatmap(dataMatrix, main="Trout Cod Heat Map")
-#cluster
-TChc <- hclust(TCdm)
-#Plot it
-#plot(TChc, main="Maccullochella macquariensis larvae")
-A2Rplot(TChc, k =3, boxes = FALSE, col.up = "gray50",main = "Maccullochella macquariensis larvae")
-
-```
-Both the heatmap and dendrogram for Trout Cod shows three distinct clades.
 
 ##Upper Murrumbidgee Larval Murray Cod Genetic and Geographic Distances
 
 This test correlates the physical distances of the nests of the larvae with genetic distance of larvae from the Murrumbidgee collected in 2013 from 6 sites.
 
-By iterating the mantel test using distance matrices generated for nest distances based on a range of larval dispersal velocities and the time available to those larvae for dispersal, we can identify the most highly correlated - the peak - which then allows an estimate of the average distance a nest site is from the collection site. The iterations of the Mantel test used a larval dispersal velocity range from 1 m to 5000 metres per day. The highest correlation represents the the average distance that larvae disperse. The assumption is that drift is downstream, not upstream. The curve produced from the estimations is as follows.
+By iterating the mantel test using distance matrices generated for nest distances based on a range of larval dispersal velocities and the time available to those larvae for dispersal, we can identify the most highly correlated - the peak - which then allows an estimate of the average distance a nest site is from the collection site. The iterations of the Mantel test used a larval dispersal velocity range from -1000 m to 5000 metres per day. The highest correlation represents the the average distance that larvae disperse. The assumption is that drift is downstream, not upstream. The curve produced from the estimations is as follows.
 
 ###Iterate through Mantel test using a range of possible larval dispersal velocities.
 
@@ -234,7 +227,7 @@ geodist<-data.frame(larv$Label,larv$nestdist)
 row.names(geodist)<-geodist[,1]
 geodist$larv.Label<-NULL
 geodist<-na.omit(geodist)
-geodist1000<-geodist #save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
+geodist1000<-geodist #save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it) my notes also say check this and next 3 lines. Needed?
 
 GeoDistMat<-dist(geodist)
 GeoDistMathm <- as.matrix(GeoDistMat)
@@ -263,8 +256,6 @@ GeoDistMathm<-as.matrix(GeoDistMathm)
 heatmap(GeoDistMathm)
 geoclust<-hclust(GeoDistMat)
 plot(geoclust)
-
-hist(larv$nestdist)
 larv1<-larv#save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
 ```
 Now that these various matrices, class 'dist' objects are created we can proceed for plot.
@@ -275,7 +266,7 @@ First a regression model is calculated and then the plot:
 ```{r "Plots_and_Correlation", echo=TRUE}
 #Linear Regression Model
 reg=lm(MCdm[lower.tri(MCdm)]~GeoDistMathm[lower.tri(GeoDistMathm)])
-summary(reg)
+summary(reg) #does xtable do something nice with this?
 plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
 abline(reg)
 # Correlations with significance levels
@@ -288,7 +279,7 @@ par(mfrow=c(2,2))
 plot(reg)
 ```
 
-So there is some small but significant correlation between genetic distance and geographic distance in the Murray cod sampled. Isolation by distance does occur, even over this very small spatial scale.
+So there is some small but significant correlation between genetic distance and geographic distance in the Murray cod sampled. Isolation by distance is evident, even over this very small spatial scale.
 
 ###Mantel Test
 
@@ -296,12 +287,14 @@ So there is some small but significant correlation between genetic distance and 
 mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 9999)
 mant
 #Check all is in order
-as.matrix(GeoDistMathm)[1:5, 1:5]
-as.matrix(MCdm)[1:5, 1:5]
+#as.matrix(GeoDistMathm)[1:5, 1:5]
+#as.matrix(MCdm)[1:5, 1:5]
 ```
 Based on these results, we can reject the null hypothesis that these two matrices, spatial distance and genetic distance, are unrelated with alpha = `r mant$pvalue`.  The observed correlation, `r mant$obs`, suggests that the matrix entries are positively associated.  This means that smaller differences in genotype are generally seen among pairs of larvae that are from nests  geographically close to each other, rather than nests which are estimated to be further away from each other. Note that since this test is based on random permutations, the code will always arrive at the same observed correlation but rarely at exactly the same p-value. 
 
-The most likely positon of nests as estimated based on the best estimate of larval drift can now be mapped onto the river topology.
+The most likely positon of nests can be estimated based on the larval dispersal velocity can now be mapped onto the river topology.
+
+AMOVA: compare catch, nets sites. Also is it suitable for chem data too?
 
 ##Siblings and What they can tell us about Larval Dispersal
 The identification of various sibling pairs and groups in the data (they can be seen in the bottom left of the genetic distance v. distance scatterplot) can potentially be useful in exploring some angles of larval dispersal. For example: 
@@ -317,16 +310,32 @@ read_chunk('siblingAnalysis.R')
 ```{r siblingAnalysisGo, echo=TRUE}
 <<siblingAnalysis>>
 ```
+### Using a sibsCorrectedNestDistance. Can this give us an idea of variance back calculating to dispersal velocity? 
+
+### Use freq histogram of age to adjust dispersal velocity? 
+
+ie: if most fish are sampled at 12 days, few at 7 or 20 then most of the dispersal happens then (doesn’t it?) so dispersal may go up from 1200 in near mean, and below 1200 at ends of the curve. Therefore the distance calculations can – at least in theory – be adjusted based on their age. If I do that does it change the variance in the distribution of (sibs?) larvae nest positions? Ie: does the estimate improve?
+
+### Parentage Analysis
+Colony etc. Page 68 LFC
+
+half sibs: sneaker males to nests?
+
 ###AMOVA
 - Bernd's data munging etc
 
-##Discussion (points only)
-* It will be interesting to mito-sequence the trout cod and determine the species of the male and female parent. It is likely that that the female is the Trout cod in the mating pair given the scarcity of trout cod compared with Murray cod and the mate pressure that must exist. 
+### PLD Kernel (LFC p.64)
 
+##Discussion (points only)
 * Evidence for local recruitment. Re recruitment to local area.
 
-* IBD quite marked compared to some marine species. See salmon over thousands of kilometres (same r squared) [ref: powerpoint slide]
+* IBD quite marked compared to some marine species. See salmon over thousands of kilometres (same r squared) [ref: powerpoint slide] p.65 LFC
 
+* Eel tramps p110 LFC
+
+*Natal Signatures p80 and p31 LFC
+
+p68 and Gst and F st p72 LFC
 
 
 ##Code Chunks in this Document
