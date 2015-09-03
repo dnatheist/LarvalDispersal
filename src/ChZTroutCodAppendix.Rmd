@@ -4,7 +4,30 @@ author: "Alan Couch"
 date: "18 August 2015"
 output: word_document
 ---
+```{r, "Project_Template_and_Knitr", echo=FALSE, warning=FALSE}
+#The following 2 and 4 lines are needed if knitr is to work with ProjectTemplate.
+require(knitr)
+if (basename(getwd()) == "src") setwd("..") #needed to get knitr to work with project template
+library('ProjectTemplate') #All projectTemplates need this up front
+load.project() #All projectTemplates need this up front
+```
 
+```{r "Set_Global_Options", echo=FALSE, warning=FALSE}
+options(width=200)
+opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+
+knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
+```
+
+```{r "LoadLibraries", echo=TRUE}
+source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
+library(ggplot2)
+library(ggdendro)
+library(ape)
+library(dendextend)
+library(Hmisc)
+library(ade4)
+```
 ###Trout Cod Larvae
 
 Although Trout cod and hybrid *Maccullochella* data are excluded from further analysis, the heatmap and dendrogram are provided here for completeness. In any case it is not an insignificant finding that the two species do in fact hybridise in this natural riverine environment even though hybrids have been seen in hatcheries and impoundments previoulsy. Furthermore this is the first time fertile F1 have been recorded as evidenced by the finding of an F2 hybrid. That said there is some question as to the providence of the Trout cod in this case as they were believe extirpated and restocked too recently (2006?) for 2 generations to have occured. FACT check this.
@@ -20,6 +43,8 @@ TChc <- hclust(TCdm)
 #plot(TChc, main="Maccullochella macquariensis larvae")
 A2Rplot(TChc, k =3, boxes = FALSE, col.up = "gray50",main = "Maccullochella macquariensis larvae")
 
+macquariensisDistMat <- dist(TCsnps) #Create Trout cod Distance Matrix
+macquariensisCluster <- hclust(macquariensisDistMat) #create cluster
 ```
 Both the heatmap and dendrogram for Trout Cod shows three distinct clades.
 
