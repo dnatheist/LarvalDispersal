@@ -3,7 +3,7 @@
 fp<-file.path("C:\\Users\\s428825\\Google Drive\\PhD Analyses\\LarvalDispersal\\data\\")
 
 DArTsnps<-DMac14.1567snps
-rm(DMac14.1567snps)# Tidy up
+#rm(DMac14.1567snps)# Tidy up
 
 DArTdm<-DMac14.1567DistMatrix
 rm(DMac14.1567DistMatrix) #Tidy up
