@@ -43,6 +43,15 @@ In order to identify important variables in a multivariate dataset one can utili
 
 The classifier saves information on feature importance ("importance=TRUE"). We can use this information in order to identify potentially import variables in the data set.
 
+```{r}
+elementList<-list("Mn","Ba","Sr")
+
+LarvalIDList<- list(186,187,188,189,190,191)
+
+lapply(LarvalIDList,otoTransectPlot)
+```
+
+
 ###Results
 
 #### First with Elements Alone (Six OtoParts)
