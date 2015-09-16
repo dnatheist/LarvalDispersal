@@ -46,7 +46,7 @@ library(ade4)
  
  PCR would bias representation. p67 LFC
  
- Wilmott Skill Metrioc p.60 LFC - any relevence?
+ Wilmott Skill Metric p.60 LFC - any relevence?
  
 ```{r}
 row.names(larv)<-larv$Label
@@ -56,13 +56,13 @@ row.names(larv)<-larv$Label
 
 ###Polymorphisms Examined
 
-Dart sequencing on Next Generation Sequencing (NGS) platforms was used to reduce genome complexity allowing an intelligent selection of genome fraction corresponding predominantly to active genes. This selection is achieved through the use of a combination of Restriction Enzymes which separate low copy sequences (most informative for marker discovery and typing) from the repetitive fraction of the genome. The advantage of DArTseq is the very high marker densities (tens of thousands of markers) which allows high resolution mapping and detailed genetic dissection of traits. 
+Dart sequencing on Next Generation Sequencing (NGS) platforms was used to reduce genome complexity allowing an intelligent selection of genome fraction corresponding predominantly to active genes. This selection was achieved through the use of a combination of Restriction Enzymes which separate low copy sequences (most informative for marker discovery and typing) from the repetitive fraction of the genome. The advantage of the DArTseq technique is the very high marker densities that were obtained which allows high resolution mapping and detailed genetic dissection of traits. 
 
 ```{r }
 uniqueSNPS<-unique(DMac14.1567snps$X..1)
 lengthDNA<-median(as.numeric(nchar(as.character(DMac14.1567snps$X..2))))
 ```
-Of the 21076 alleles, the number of unique Maccullochella snps analysed in the DaRT sequences was `r length(uniqueSNPS)-2`. This provide high resolution of the genotypes of the larvae. The base pairs that had mutated we as follows:
+Of the 21076 alleles, the number of unique *Maccullochella* snps analysed in the DaRT sequences was `r length(uniqueSNPS)-2`. The base pairs that had mutated we as follows:
 
 ```{r table2, echo=FALSE, message=FALSE, warnings=FALSE, results='asis'}
 tabl <-"
@@ -95,30 +95,30 @@ table(dfBPchange)
 # Preferably display as a cross tab.
 ```
 
-The polymorphisms examined included SNPs and small indels in restriction enzyme recognition sites, and while none were observed larger insertions/deletions in restriction fragments could also have been utilised. The polymorphism selected for genotyping were all snps. 
+The polymorphisms examined included SNPs and small indels in restriction enzyme recognition sites, and while none were observed,  larger insertions/deletions in restriction fragments could also have been utilised. The polymorphisms selected for genotyping were all snps. 
 
 The length of the fragments of DNA in this sequencing was `r lengthDNA` base pairs. The position of the polymorphism along the 69 base pair DNA fragment can be seen in the following histogram
 
 ```{r}
-polymorphismPositionHistogram<-hist(as.numeric(DMac14.1567snps$X..4),main= "Histogram of SNP Position in 69 Base Pair Fragment", xlab="SNP Position on Fragment - BIN", breaks = 13, col = "lightblue", border = "pink") #a plot of the relative position of the polymorphism along the 69 base pair fragment of DNA.
+polymorphismPositionHistogram<-hist(as.numeric(DMac14.1567snps$X..4),main= "Histogram of SNP Position in DaRT seq 69 Base Pair Fragment", xlab="SNP Position on Fragment - BIN", breaks = 13, col = "lightblue", border = "pink",cex.main = 2.5,cex.lab=2) #a plot of the relative position of the polymorphism along the 69 base pair fragment of DNA.
 #plot(polymorphismPositionHistogram)
 ```
 
 
 ###All *Maccullochella* Larvae
 
-A dendrogram of all the larvae allows examination of the relationships between all the larvae. In the first instance this is neccessary to ensure there are no species other than Murray cod in the subsequent analysis.
+A dendrogram of all the larvae allows examination of the relationships between all the larvae. In the first instance this is neccessary to ensure there are no species other than Murray cod for the subsequent analysis.
 
 ```{r "All_Maccullochella_Larvae", echo=TRUE}
 
 MacDm <- dist(allsnps) #Create distance matrix all Maccullochella larvae
 #heatmap(as.matrix(MacDm)) #Make a heat map
 MacHC <- hclust(MacDm) #make a heirarchical cluster
-plot(color_labels(MacHC, k = 5), main="All Maccullochella Larvae") 
+plot(color_labels(MacHC, k = 5), main="All Maccullochella Larvae Clades",cex.main = 2.5,cex.lab=0.75) 
 #Plot the cluster dendrogram
 ```
 
-As it turns out there are multiple *Maccullochella* species. All the larvae collected fall into one of four distinct clades. The above dendrograms shows all larvae (mostly Murray cod) and two known Trout cod controls, and what appears to be F1 and F2 hybrids between the two species. There were 4 hybrid and no pure trout cod larvae detected in the 92 larvae caught and sequenced from the river. This is an interesting finding and detail can be found in the Trout Cod Appendix if the reader is interested.
+As it turns out there are multiple *Maccullochella* species. All the larvae collected fall into one of four distinct clades. The above dendrograms shows all larvae (mostly Murray cod) and two known Trout cod controls, and what appears to be F1 and F2 hybrids between the two species. There were 4 hybrid and no pure trout cod larvae detected in the 92 larvae in 2013 caught and sequenced from the river. This is an interesting finding and detail can be found in the Trout Cod Appendix if the reader is interested.
 
 So we now use the set with the non-Murray cod removed to identify Murray cod clades and conduct the remainder of the analysis on the Upper Murrumbidgee Murray cod larvae only.  The Trout cod and the hybrids are easily identified and eliminated from the data to ensure we are looking only at the Murray cod larvae.
 
@@ -127,13 +127,13 @@ So we now use the set with the non-Murray cod removed to identify Murray cod cla
 First we look at a heat map and dendrogram of Murray cod larvae having excluded Trout cod and hybrids data from the data frame. 
 ```{r, "Murray_Cod_Larvae_Only", echo=TRUE}
 MCdm <- dist(MCsnps)#Create a Murray Cod Only distance matrix
-heatmap(as.matrix(MCdm), main="Murray Cod Heat Map")#Heat map
+heatmap(as.matrix(MCdm), main="2013 Murray Cod Larvae Genotype Heat Map" ,cex.main = 2.5,cex.lab=2)#Heat map
 MChc <- hclust(MCdm) #Cluster
 #Plot it
-plot(MChc,main=expression(paste("Genetic Relationships - ", italic("Maccullochella peelii"), " larvae 2013 cohort ")))
+plot(MChc,main=expression(paste("Genetic Relationships - ", italic("Maccullochella peelii"), " larvae 2013 cohort ")),cex.main = 2.5,cex.lab=2.0)
 ```
 
-In most cases very closely related larvae have been collected at the same spot over the same period of a few of days. Pairs or clusters of larvae with a height of less than 26.5 are likely siblings. But in some cases very closely related pairs of larvae have turned up at different sites. Sometimes over time frames that seem unlikely or suggest the larvae have travelled upstream. However, must remember that it is siblings - not the same fish - that is caught so this might just represent the 'smear' of larvae along the river after dispersing from the nest.
+So there is some structure evident among the Murray cod genotypes. There is not a large difference in the dissimilarity but there is some. In most cases very closely related larvae have been collected at the same spot over the same period of a few of days. Pairs or clusters of larvae with a height of less than 26.5 are likely siblings. But in some cases very closely related pairs of larvae have turned up at different sites. Sometimes over time frames that seem unlikely or suggest the larvae have travelled upstream. However, must remember that it is siblings - not the same fish - that is caught so this might just represent the 'smear' of larvae along the river after dispersing from the nest.
 
 The distance matrix suggests a very low genetic diversity in the population of Murray cod sampled with most of the distances around 0.03. Given this, can we be sure that the most closely related larvae are siblings? 
 
@@ -143,7 +143,7 @@ The distance matrix suggests a very low genetic diversity in the population of M
 #A2Rplot(MChc, k = 12, boxes = FALSE, col.up = "gray50")
 dend1 <- color_branches(MChc, k = 12)
 dend1 <- color_labels(dend1, k = 12)#Use h or k
-plot(dend1, main=expression(paste("Genetic Relationships - ", italic("Maccullochella peelii"), " larvae 2013 cohort ")))
+plot(dend1, main=expression(paste("Genetic Relationships - ", italic("Maccullochella peelii"), " larvae 2013 cohort ")),cex.main = 2.5,cex.lab=2)
 ```
 
 While the Murray cod larvae are all very closely related, they can now be resolved into 12 clades.These clades represent 12 'extended family groups' and the 3 clades represent the three higher level (race) clades in the river.
@@ -160,19 +160,17 @@ Extract three higher level clades
 dend2 <- color_labels(MChc, k = 3)#Use h or k
 raceCladeNumber<-cutree(dend2,k=3) #This is like using:dendextend:::cutree.dendrogram(dend1,h=70) h or k can be specified
 raceCladeNumber<-as.data.frame(raceCladeNumber)
-raceCladeNumber[,] #The clades are numbered by default. So I need to name them something sensible for subsequent analysis.
+#raceCladeNumber[,] #The clades are numbered by default. So I need to name them something sensible for subsequent analysis.
 
 larvalClades<-merge(cladeNo,raceCladeNumber, by="row.names")
 row.names(larvalClades)<-larvalClades$Row.names
 larvalClades$Row.names<-NULL
 
-#Add Clade Names
-#So the list of larval clades (two levels) is:
-#larvalClades
+#So the list of larval clades no and raceCladeNumber -> database.
 
 ```
 
-### Interannul Differences
+### Interannual Differences
 Larvae were collected from three years.
 
 #### Genetics of 2013 Cohort
@@ -188,7 +186,9 @@ half sibs: sneaker males to nests?
 
 Confirmation of siblings determined by DaRT data?
 
-Any sibs across years?
+Any sibs across years? Siblings to be considered withing year and possibly, but less likely across years.
+
+Siblingness supported by the temporal and spatial proximity alone (next chapter) which can predict genotype siblingness with confusion error of....
 
 ###AMOVA
 - Bernd's data munging etc
