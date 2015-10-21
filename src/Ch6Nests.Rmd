@@ -19,7 +19,7 @@ opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
 ```
-This document includes methods, results and possibly some discussion dot points for the nest distribution chapter.  
+This document includes methods, results and possibly some discussion dot points for the nest distribution and larval dispersal chapter.  
 
 ## Packages Required to be Loaded
 ```{r "LoadLibraries", echo=TRUE}
@@ -98,6 +98,8 @@ This test correlates the physical distances of the nests of the larvae with gene
 
 By iterating the mantel test using distance matrices generated for nest distances based on a range of larval dispersal velocities and the time available to those larvae for dispersal, we can identify the most highly correlated - the peak - which then allows an estimate of the mean larval dispersal velocity. In turn the mean distance a nest site is from the collection site. The iterations of the Mantel test used a larval dispersal velocity range from -2000 metres (upstream dispersal) to 5000 metres (downstream dispersal) per day. The highest correlation represents the the mean velocity of the dispersing larvae. While the current assumption is that dispersal is downstream, not upstream, we test for this. The curve produced from the estimations is as follows.
 
+This can only work within years as the idea of geographic distances looses all meaning between years.
+
 ###Iterate through Mantel test using a range of possible larval dispersal velocities.
 
 ```{r}
@@ -130,7 +132,7 @@ MCdm<-MCsnps[-c(1:7),] #remove non-numeric variables
 MCdm <- dist(MCdm) # Create a Murray Cod distance matrix
 MCdm<-as.matrix(MCdm)
 MCdm<-as.data.frame(MCdm)
-#This is to be used for plotting. It does not vary inside the iteration (Genetic distance is fixed) while actual geographic distance (dispersal velocity) is unknown.
+#This is one part of the Mantel test given Isolation by Distance. It does not vary inside the iteration (Genetic distance is fixed) while actual geographic distance (dispersal velocity) is the unknown and is recalculated within the iteration.
 
 #First sort MCdm - just to be sure that the two matrices are ordered identically before mantel test.
 MCdm<-as.data.frame(MCdm)
@@ -181,7 +183,7 @@ proc.time() - ptm
 
 itmant<-na.omit(itmant) #remove NAs 
 itmantdf<-as.data.frame(itmant) #make into a data frame
-plot(itmantdf$V1,itmantdf$V2,main = "Mantel Correlation Between Genetic Distance and Geographic Distance", xlab = "Geographic Distance (metres)", ylab = "Correlation with Genetic Distance Matrix (Mantel Test)")
+plot(itmantdf$V1,itmantdf$V2,main = "Mantel Correlation Between Pairwise Genetic Distance and Geographic Distance", xlab = "Geographic Distance (metres)", ylab = "Correlation with Genetic Distance Matrix (Mantel Test)",cex.main = 2.5,cex.lab=2)
 rm(itmant)
 
 ###########
@@ -202,24 +204,23 @@ dispersalVelocity<- subset(itmantdf, V2==max(V2) , select = V1)
 dispersalVelocity<-as.numeric(dispersalVelocity)
 ```
 
-The distance above the collection site as the larvae disperse at `r dispersalVelocity` metres per day between leaving the nest and being collected at sampling site also allows an estimate of the Murray cod pelagic larval drift duration to be made.
+The mean larval dispersal velocity in a downstream direction from the nest is `r dispersalVelocity` metres per day. The distance above the collection site as the larvae disperse at `r dispersalVelocity` metres per day between leaving the nest and being collected at sampling site also allows an estimate of the Murray cod pelagic larval drift duration to be made.
 
-This mean pelagic larval dispersal (PLD) value is a mean for larvae along the entire river reach. It tells us nothing about the variance of that dispersal (or can it)??? It is a summary statistic of distribution of larvae drifting (dispersing) varying distances below the nest. 
+This mean larval dispersal velocity (LDV) value is a mean for larvae along the entire river reach. It tells us nothing about the variance of that dispersal (or can it)??? It is a summary statistic of the velocity of larvae dispersing from the nest, before dispersing larvae are no longer detected in the water column. 
 
 The obvious thing to do would be to take the approach on a site by site basis over a number of years, because the river speeds vary at each site and between years but at present there are too few samples from most sites and other years to use such an approach with confidence.
 
 ```{r "Distance_Matrices_and_Ordering", echo=TRUE}
+#Recreate the geographic distance matrix with the mean larval dispersal velocity as calculated.
 larv$nestDist<-larv$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv$Day.of.Year-(larv$hatchDoY+7)))
-geodist<-data.frame(larv$Label,larv$nestDist)
+geodist<-data.frame(larv$Label,larv$nestDist) # Populate databse with this.
 row.names(geodist)<-geodist[,1]
 geodist$larv.Label<-NULL
 geodist<-na.omit(geodist)
 
 GeoDistMat<-dist(geodist)
 GeoDistMathm <- as.matrix(GeoDistMat)
-#heatmap(GeoDistMathm)
 geoclust<-hclust(GeoDistMat)
-#plot(geoclust)
 ```
 
 Now that these various matrices, class 'dist' objects are created we can make a heat map.
@@ -228,27 +229,23 @@ Now that these various matrices, class 'dist' objects are created we can make a 
 heatmap(GeoDistMathm)
 ```
 
-Clearly there is a pattern in the geographic distance matrix. In it self this is unsuprising given the sampling regime.
-
-```{r "Spatial Distance Dendrogram", echo=TRUE}
-plot(geoclust)
-```
-
+Clearly there is a pattern in the geographic distance matrix. In it self this is unsuprising given the spatial distribution of the sampling regime.
 
 ###Plot and Correlate Genetic and Geographic Distance Matrices for Mean Dispersal Velocity
 
 First a regression model is calculated and then the plot:
 ```{r "Plots_and_Correlation", echo=TRUE}
 #Linear Regression Model
-reg=lm(MCdm[lower.tri(MCdm)]~GeoDistMathm[lower.tri(GeoDistMathm)])
+reg<-lm(MCdm[lower.tri(MCdm)]~GeoDistMathm[lower.tri(GeoDistMathm)])
 summary(reg) #does xtable do something nice with this?
 plot(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])
 abline(reg)
+title(main="Pairwise Genetic Distance and Spatial Distance of Murray cod larvae", xlab="Spatial Distance Between Larval Pairs (m)", ylab="Genetic Distance Between Larval Pairs", cex.main=2.5, cex.lab=2)
 # Correlations with significance levels
-rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])#(x, type="pearson") # type can be pearson or spearman
+#rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],MCdm[lower.tri(MCdm)])#(x, type="pearson") # type can be pearson or spearman
 
 #ANOVA
-anova(reg)
+#anova(reg)
 #Plot residuals
 par(mfrow=c(2,2))
 plot(reg)
@@ -269,10 +266,10 @@ The most likely positon of nests can be estimated based on the larval dispersal 
 AMOVA: compare catch, nets sites.
 
 ##Siblings and What they can tell us about Larval Dispersal
-The identification of various sibling pairs in the data (they can be seen in the bottom left of the genetic distance v. distance scatterplot) with a genetic distance (FST) can potentially be useful in exploring some angles of larval dispersal. For example: 
+The identification of various sibling pairs in the data (they can be seen in the bottom left of the genetic distance v. distance scatterplot) with a small genetic distance (FST) can potentially be useful in exploring some angles of larval dispersal. For example: 
 
 + do siblings dispere in schools or alone? 
-
++ refine nest distance estimate to a mean of the known siblings
 + How long does the hatch period in the wild last? It is known in hatcheries to last x days but not in the wild. Siblings also facilitate accurate allocation of larvae to nest because, by definition, they come from the same nest. If siblings appear between years  then this would suggest repeat adult pairings over years. To date we do not know if this happens.
 
 ```{r siblingAnalysisGo, echo=TRUE}
@@ -303,23 +300,23 @@ withSibDF<-as.data.frame(withSibDF) #make back to a df
 
 ##Now to see how many days between hatch of sibs.
 
-withSib2<-subset(larv, select=c(Label,hatchDoY)) #get labels and hatch DoY
-withSib2<-withSib2[withSib2$Label %in% withSib,] #reduce df to the siblings only
+sibHatchPeriod<-subset(larv, select=c(Label,hatchDoY)) #get labels and hatch DoY
+sibHatchPeriod<-sibHatchPeriod[sibHatchPeriod$Label %in% withSib,] #reduce df to the siblings only
 
-row.names(withSib2)<-withSib2[,1] #make label row names for making distance matrix
-withSib2$Label<-NULL #tidy up redundant
+row.names(sibHatchPeriod)<-sibHatchPeriod[,1] #make label row names for making distance matrix
+sibHatchPeriod$Label<-NULL #tidy up redundant
 
 #Then to make a distance matrix.
-withSibDM<-dist(withSib2)
-withSibDM2<-as.matrix(withSibDM)
+sibHatchPeriodDistMatrix<-dist(sibHatchPeriod)
+sibHatchPeriodDistMatrix<-as.matrix(sibHatchPeriodDistMatrix)
 
 ###sort rows and columns of both before we can do matrix algebra
-withSibDM2<-as.data.frame(withSibDM2)
-withSibDM2$sort<-row.names(withSibDM2)
-withSibDM2 <- withSibDM2[order(withSibDM2$sort),]#sort row order
-withSibDM2$sort<-NULL
-withSibDM2<-withSibDM2[,order(names(withSibDM2))]#sort column order
-withSibDM2<-as.matrix(withSibDM2)
+sibHatchPeriodDistMatrix<-as.data.frame(sibHatchPeriodDistMatrix)
+sibHatchPeriodDistMatrix$sort<-row.names(sibHatchPeriodDistMatrix)
+sibHatchPeriodDistMatrix <- sibHatchPeriodDistMatrix[order(sibHatchPeriodDistMatrix$sort),]#sort row order
+sibHatchPeriodDistMatrix$sort<-NULL
+sibHatchPeriodDistMatrix<-sibHatchPeriodDistMatrix[,order(names(sibHatchPeriodDistMatrix))]#sort column order
+sibHatchPeriodDistMatrix<-as.matrix(sibHatchPeriodDistMatrix)
 
 sibsLogical<-as.data.frame(sibsLogical)
 sibsLogical$sort<-row.names(sibsLogical)
@@ -329,7 +326,7 @@ sibsLogical<-sibsLogical[,order(names(sibsLogical))]#sort column order
 sibsLogical<-as.matrix(sibsLogical)
 ####
 
-sibsHatchDiff<-sibsLogical*withSibDM2  # need half the triangle here? as mean lowered otehrwise?
+sibsHatchDiff<-sibsLogical*sibHatchPeriodDistMatrix  # need half the triangle here? as mean lowered otehrwise?
 sibsHatchDiff[sibsHatchDiff == 0] <- NA 
 sibsHatchDiffMeans<-as.data.frame(colMeans(sibsHatchDiff, na.rm=TRUE))
 
@@ -343,7 +340,7 @@ write.csv(format(sibsHatchDiffMeans), file="sibsHatchDiffMeans.csv")
 describe(sibsHatchDiffMeans)
 #sibsHatchDiffMeans # was just printed for validation
 names(sibsHatchDiffMeans)[names(sibsHatchDiffMeans)=="colMeans(sibsHatchDiff, na.rm = TRUE)"] <- "colM"
-hist(sibsHatchDiffMeans$colM,breaks = 25, col = "lightblue", border = "pink")
+hist(sibsHatchDiffMeans$colM,breaks = 25, main="Histogram of Differences Between Siblings Hatching Day", col = "lightblue", border = "pink",cex.main = 2.5,cex.lab=2)
 
 #So the three objective have been achieved. 
 #       1. What duration is hatching in wild nests? Description above showns mean etc.
@@ -351,21 +348,19 @@ hist(sibsHatchDiffMeans$colM,breaks = 25, col = "lightblue", border = "pink")
 #       3. Create a logical matrix of siblinf relationships to re-use (sibsLogical) done
 
 #Clean Up
-rm(sibsSubset)
+#rm(sibsSubset)
 rm(sibsHatchDiff)
 rm(sibsHatchDiffMeans)
-rm(sibsLogical)
+#rm(sibsLogical)
 rm(withSib)
-rm(withSib2)
+rm(sibHatchPeriod)
 rm(withSibDF)
-rm(withSibDM)
-rm(withSibDM2)
+rm(sibHatchPeriodDistMatrix)
 rm(MCdmForSibs)
 
 ```
-
+The period over which the hatch occurs for siblings varies from 0 to 4.5 days with a mean of 0.85 (should make this inline r code though) 
 ```{r "Dispersal Distances and Nest Location Variables", echo=TRUE }
-#larv$nestDist<-larv$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv$Day.of.Year-(larv$hatchDoY+7))) # To create a distance using the previously calculated mean drift velocity (km/d available since leaving brood care)
 
 ##Calculate a family group
 families<-as.data.frame(cutree(peeliiDendro, h = 26.5))
@@ -405,13 +400,12 @@ geodist<-data.frame(final$Label,final$sibCorrectedNestDist)
 row.names(geodist)<-geodist$final.Label
 geodist$final.Label<-NULL
 geodist<-na.omit(geodist)
-#geodist1000<-geodist #save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
 
 GeoDistMat<-dist(geodist)
 GeoDistMathm <- as.matrix(GeoDistMat)
-heatmap(GeoDistMathm)
+#heatmap(GeoDistMathm)
 geoclust<-hclust(GeoDistMat)
-plot(geoclust)
+#plot(geoclust)
 
 #make sure both matrices are in correct order - rows and cols
 #First sort MCdm
@@ -431,15 +425,6 @@ GeoDistMathm$sort<-NULL
 GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
 GeoDistMathm<-as.matrix(GeoDistMathm)
 
-#heatmap(GeoDistMathm)
-#geoclust<-hclust(GeoDistMat)
-#plot(geoclust)
-
-#hist(larv$nestdist)
-#larv1<-larv#save this estimate for haplogroups distance plot (after the Iterated Mantel has changed it)
-
-#Now that these various matrices, class 'dist' objects are created we can proceed for plot.
-
 ###Plot and Correlate genetic and geographic distance matrices
 
 #First a regression model is calculated and then the plot:
@@ -449,39 +434,56 @@ reg<-lm(peeliiDistMat[lower.tri(peeliiDistMat)]~GeoDistMathm[lower.tri(GeoDistMa
 summary(reg)
 plot(GeoDistMathm[lower.tri(GeoDistMathm)],peeliiDistMat[lower.tri(peeliiDistMat)])
 abline(reg)
+title(main="Pairwise Genetic Distance and Spatial Distance of Murray cod larvae (Nest Distance Corrected for Siblings)", xlab="Spatial Distance Between Larval Pairs (m)", ylab="Genetic Distance Between Larval Pairs", cex.main=2.5, cex.lab=2)
 # Correlations with significance levels
-rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],peeliiDistMat[lower.tri(peeliiDistMat)])#(x, type="pearson") # type can be pearson or spearman
+#rcorr(GeoDistMathm[lower.tri(GeoDistMathm)],peeliiDistMat[lower.tri(peeliiDistMat)])#(x, type="pearson") # type can be pearson or spearman
 
-###Mantel Test
+###Mantel Test Using Sibling Corrected Nest Distance
 mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(peeliiDistMat), nrepet = 9999)
 
 ##This results in a slightly better r value and Monty Carlo test so it seems appropriate that sibling corrected nest distances are used in the iterated mantel rather than the uncorrected ones. That said the difference, if only, is expected to only be slight.
 ```
 
+### Variance in Estimation of Nest Distance Using Larval Dispersal Velocity
+Because we know siblings Nest Distance is the same, that is a value of the mean nest distance for the siblings as calculated. But because we know there is a zero difference in actual nest distance between siblings we can calculate an error associated with the estimate derived from the above method. This error is likely to be a suitable proxy for the error of the non-siblings whose nest distances were estimated with the same method.
+
+```{r "nestDistanceDifferenceError"}
+#An estimate of error - the difference between our estimate of nest distance and the known value of the difference between nest distances for siblings (zero).  
+final<-merge(withAnySibsDF,final, by.x="withAnySibs", by.y="Label")
+final$LDVerror<-abs(final$nestDist-as.numeric(final$sibCorrectedNestDist))
+require(psych)
+describe(final$LDVerror)
+
+#Create a list of sib pair dyads (doubled up at the moment)
+require(tidyr)
+sibsSubset$a<-row.names(sibsSubset)
+sibDyads<-gather(sibsSubset,key = a,value,... = 1:53)
+sibDyads<-subset(sibDyads, value>0)
+sibDyads$value<-NULL
+
+GeoDistMatDF<-as.data.frame(GeoDistMathm)
+
+```
+
 ### Use freq histogram of age to adjust dispersal velocity? 
 
-ie: if most fish are sampled at 12 days, few at 7 or 20 then most of the dispersal happens then (doesn’t it?) so dispersal may go up from 1200 in near mean, and below 1200 at ends of the curve. Therefore the distance calculations can – at least in theory – be adjusted based on their age. If I do that does it change the variance in the distribution of (sibs?) larvae nest positions? Ie: does the estimate improve?
+ie: if most fish are sampled at 12 days, few at 7 or 20 then most of the dispersal happens then (doesn’t it?) so dispersal may go up from 1200 in near mean age, and below 1200 at ends of the curve. Therefore the distance calculations can – at least in theory – be adjusted based on their age (proportionally). If I do that does it change the variance in the distribution of (sibs?) larvae nest positions? Ie: does the estimate improve?
 
-###Now to calculate the largest potential settling distance if they moved at mean dispersal velocity for more of their remaining drift days.
+###Now to calculate the largest potential settling distance if they moved at mean larval dispersal velocity (LDV) for more of their remaining drift days.
 ```{r echo=TRUE}
 larv$potentialSettlingDistance<-larv$Distance.to.Angle.Crossing..m.+(20-larv$ageOL)*dispersalVelocity
+summary(larv$potentialSettlingDistance)
 ```
+
+
 
 ###Look at Clades Over the River Reach
 
 The clades distribution over the river reach suggests some structure.
 ```{r "Clades_and_Location", echo =TRUE}
-#dispersalVelocity<-1200
-
-#larv1<-merge(larv,qslGeneticsForNestChapter, by.x="LarvalID", by.y="LarvaID")
-#rownames(CladeNamesToMerge) <- CladeNamesToMerge[,1]
-#CladeNamesToMerge$Label<-rownames(CladeNamesToMerge)
-#larv2<-merge(larv1,CladeNamesToMerge, by="Label")
-#larv2<-merge(larv2,qslAgeData, by.x="LarvalID", by.y="LarvaID")
-# To create a distance using the previously calculated best estimate of drift velocity (m/d available since leaving brood care)
-#larv2$nestDist<-larv2$Distance.to.Angle.Crossing..m.-(dispersalVelocity*(larv2$Day.of.Year-(larv2$hatchDoY+7))) #this should come from DB perhaps
 
 plot(larv$nestDist,larv$cladeNumber, xlab="Nest Distance (m)", ylab = "Clade")
+title(main="Estimated Location of Nests of 2013 Murray cod larvae", xlab="Distance Below Angle Crossing (m)", ylab="Clade", cex.main=2.5, cex.lab=2)
 
 #plot2 <- ggplot(larv1, aes(nestDist,CladeName))
 #plot2 + geom_point(alpha = 2/3) +geom_boxplot()+labs(title = "Clades Nests and their Position on River")+ labs(x="Nest Location") +labs(y = "Clade")+ theme(axis.text.x=element_text(angle=90))
@@ -496,9 +498,13 @@ acf(as.dist(peeliiDistMat))
 * This suggests that all clades except one (hT1) exist below a barrier around 10000m but that only three clades (hM1,hL1 and hK2)  exist above and below this barrier. 
 
 * One possible explanation that might be inferred from this is that adults migrating upstream for spawning are prevented from doing so by a barrier between the 5000 and 15000m mark but that larvae produced above the barrier are able to disperse and so are represented downstream. It is noteable that the barrier and the big gap in apparent nests from 6000m to 14000m corresponds with the Tharwa sand slug - a long stretch of sand that has previously been the subject of remedial work because it has been believed to be a barrier to cod migration (ref).
-```{r}
-#![Nest Along the River](../images/Dashboard1.jpg) # needs updating in Tableau to ensure commensurate with r.
-```
+
+* So nest site is a much better 'site' than the capture site which confounds age and other dispersal variables. Nest will be used in subsequent chapters. 
+
+![Nest Along the River](../images/Dashboard1.jpg) 
+
+needs updating in Tableau to ensure commensurate with r.
+
 
 
 ##Code Chunks in this Document
