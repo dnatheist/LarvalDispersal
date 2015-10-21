@@ -10,7 +10,7 @@ DArTdm$X.<-NULL
 #Now we have amova matrix $distances 144x144 
 
 #Now to make $samples and then $structures - below all unfinished!!!
-siteGroupings<-read.csv(".\\data\\siteGroupings.csv")
+siteGroupings<-read.csv("/data/siteGroupings.csv")
 source("addNewData.r")
 allowedVars <- c("twoGroups","threeGroups")
 addNewData("dataNew.csv", myData, allowedVars)
@@ -18,7 +18,7 @@ addNewData("dataNew.csv", myData, allowedVars)
 
 # merge with larv to get site names
 
-#################read.csv(".data/DMac14.1567snps.csv") needs fixing
+read.csv("data/DMac14-1567snps.csv")
 
 DArTsnps<-DMac14.1567snps
 rm(DMac14.1567snps)# Tidy up
