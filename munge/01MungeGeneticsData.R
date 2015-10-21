@@ -8,9 +8,9 @@ DArTsnps<-DMac14.1567snps
 DArTdm<-DMac14.1567DistMatrix
 rm(DMac14.1567DistMatrix) #Tidy up
 
-larv<-qslLarvaeAgePlus #Make dataframe from larval data
-rownames(larv) <- larv[,1] #Make Labels row names too
-rm(qslLarvaeAgePlus) #Tidy up
+larv<-qslAllLarvaInfo #Make dataframe from larval data
+rownames(larv) <- larv[,1] #Make Labels row names too or better: row.names(larv)<-larv$Label
+rm(qslAllLarvaInfo) #Tidy up
 
 # Extract more meaningful names (Labels) in place of Larval ID numbers
 DArTsnps<-t(DArTsnps) # Just transpose this way larvae become observations and snps become the variables.
@@ -37,7 +37,7 @@ recoderFunc <- function(data, oldvalue, newvalue) {
   
 }
 
-vec<-recoderFunc(vec, larv$LarvalRecords.LarvaID, larv$Label)
+vec<-recoderFunc(vec, larv$LarvalRecords_LarvaID, larv$Label)
 
 DArTsnps[,4]<-vec # Load more meaningful names (Labels) in place of Larval ID numbers
 rm(vec)# Tidy up
