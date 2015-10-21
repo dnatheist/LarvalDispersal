@@ -1,5 +1,5 @@
 ---
-title: "Chapter 5: Genetic Spatial Structure in Murray Cod"
+title: 'Chapter 5: Genetic Spatial Structure in Murray Cod'
 author: "Alan Couch"
 date: "`r format(Sys.time(), '%a %b %d %X %Y')`"
 output: word_document
