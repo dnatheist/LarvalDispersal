@@ -4,7 +4,7 @@ require(dplyr)
 #First using Core as the values. So need to combine first
 ImportantVars<-ChemAnalCore
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(84,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(84,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
@@ -31,7 +31,7 @@ ggplot(forest.importance, aes(x=row.names(forest.importance), y=mean)) +
 #Now to do the same but using Edge1 as the values. So need to combine first
 ImportantVars<-ChemAnalE1
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
@@ -59,7 +59,7 @@ ggplot(forest.importance, aes(x=row.names(forest.importance), y=mean)) +
 #Now to do the same but using Edge2 as the factor rather than SiteName. So need to combine first
 ImportantVars<-ChemAnalE2
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
@@ -86,7 +86,7 @@ ggplot(forest.importance, aes(x=row.names(forest.importance), y=mean)) +
 #Now to do the same but using Edge0 values. So need to combine first
 ImportantVars<-ChemAnal0
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
@@ -114,7 +114,7 @@ ggplot(forest.importance, aes(x=row.names(forest.importance), y=mean)) +
 #Now to do the same but using All4 values. So need to combine first
 ImportantVars<-ChemAnalAll4
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
@@ -142,7 +142,7 @@ ggplot(forest.importance, aes(x=row.names(forest.importance), y=mean)) +
 #Now to do the same but using Non-Core values. So need to combine first
 ImportantVars<-ChemAnalNonCore
 
-ImportantVars<- select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(97,13,14,15,120:151)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 colnames(ImportantVars)[1]<-"SiteName"
 ImportantVars$SiteName<-as.factor(ImportantVars$SiteName)
