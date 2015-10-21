@@ -27,35 +27,63 @@ Actually this whole file can probs be deleted as this aging is coming from Table
 ##Methods
 ![Map of Study Area](../images/M2GStudyArea.jpg)
 
+###Age of Larval Fish
+```{r}
+yearList<-list("2011","2012","2013")
+```
+This section is to add some calculated variables to the data. Firstly to add age which is estimated from Otolith Length. Otolith lengths and known ages have been prepared for a subset from each year (n=x,y,z) respectively for {r yearOnly}
+
+```{r "Age Curve", echo="TRUE"}
+require(ggplot2)
+ageCurveDF<-data.frame(qslAllLarvaInfo$KnownAge,qslAllLarvaInfo$MeanOtolithLength,qslAllLarvaInfo$YearOnly)
+ageCurveDF<-ageCurveDF[complete.cases(ageCurveDF),]
+
+p <- ggplot(ageCurveDF, aes(qslAllLarvaInfo.MeanOtolithLength, qslAllLarvaInfo.KnownAge)) + geom_point(aes(colour=as.factor(qslAllLarvaInfo.YearOnly)),size=3)
+p<-p + facet_grid(. ~ qslAllLarvaInfo.YearOnly)
+p + stat_smooth(method="lm", se=FALSE)
+
+require(nlme) ## OR library(lme4)
+lmList(qslAllLarvaInfo.KnownAge~qslAllLarvaInfo.MeanOtolithLength|qslAllLarvaInfo.YearOnly,data=ageCurveDF)
+lms<-lmList(qslAllLarvaInfo.KnownAge~qslAllLarvaInfo.MeanOtolithLength|qslAllLarvaInfo.YearOnly,data=ageCurveDF)
+summary(lms)
+```
+
+So age curves for each year do differ significantly so individual year curves are used to estimate the larval age for each year cohort, rather than pooling the larva age and otolith size curves. So these three curves have been used in the database to calculate the estimated age for each larvae.
+
+```{r "Estimate Ages for all Larva Based on Mean Otolith Size", eval=FALSE}
+# NOT USED Calculate the estimates for each year and store them in vecotor ready for export/import to database.
+
+qslAllLarvaInfo$ageOL2<-"NA"
+ageEst<- function(yearList) {
+        tmp<-dplyr::filter(qslAllLarvaInfo,qslAllLarvaInfo$YearOnly==yearList)
+        }
+#qslAllLarvaInfo$ageOL2
+
+sapply(yearList, ageEst)
+#write.csv etc
+
+```
+
 ###Calculate Some Additional Parameters
 
-This section is to add some calculated variables to the data. In particular to add:
- 
-  Age from Otolith Length: 74.308*[MeanOtolithLength]-4.44361 (Days) (actually 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967)
-  
   Hatch date:  [Day of Year Caught]-[Age From Otolith Length] (Day of the Year - DoY)
   
   Incubation: 20.67-0.667*[WaterTemp(DegC) Mean] (Days)
   
   Spawning:[Hatch]-[Incubation] (Day of the Year)
 
-These additional parameters will be used to estimate distances that the larvae have dispersed based on the number of days available to them since leaving the nest and the day and location of collection. In turn the time available will be used to model the most likely distance travelled by the larvae.
-
-```{r "Additional_Calculations", echo="TRUE"}
-
-#larv$ageOL<-74.308*larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults-4.44361
-larv$ageOL<- 35.8 *larv$Mean.Otolith.Length.is.in.Millimetres.for.comparison.with.Adults + 6.8967
-larv$hatchdoy<-larv$Day.of.Year-larv$ageOL
-larv$incTime<-20.67-0.667*larv$WaterTemp.DegC..Mean
-larv$spawn<-larv$hatchdoy-larv$incTime
-
-larv[c(20:30),c(119:122)] #just to see all OK
+```{r "Addional Parameters"}
+larv$hatchDoY<-larv$Day.of.Year-larv$ageOL
+larv$incubTime<-20.67-0.667*larv$WaterTempMean
+larv$spawnDoY<-larv$hatchDoY-larv$incubTime
 ```
+
+These additional parameters will be used to estimate distances that the larvae have dispersed based on the number of days available to them since leaving the nest and the day and location of collection. In turn the time available will be used to model the most likely distance travelled by the larvae.
 
 But before that we need to establish individual larval genetic identies so that we can see if genetic distance is positively corelated with geographic distance between individuals.
 
 ##Results
-Results from this chapter are mostly done inthe existing word document chapter. May need updating to reflect refined aging parameters and multi-years aging curves.
+Results from this chapter are mostly done in the existing word document chapter. May need updating to reflect refined aging parameters and multi-years aging curves.
 
 ##Discussion (points only)
 Discussion is also mostly done in word document for this chapter.
