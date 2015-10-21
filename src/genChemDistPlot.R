@@ -2,6 +2,7 @@
 
 library(ade4)
 
+#here making the labels into row names is missing. but worked before I added labels first field in larv?
 MCdmPrep<-MCsnps[-c(1:7),]
 
 test<-merge(MCdmPrep,ImpVarScaled,by = "row.names")
