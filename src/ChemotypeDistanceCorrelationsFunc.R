@@ -1,11 +1,12 @@
 ## @knitr chemotypeDistanceMatrices
 library(clusterSim)
+require(dplyr)
 #This creates distance matrices for chemotype and geographic distance and then use a mantel test to see correlation
 #First using Otolith Core chemistry.
 
 allVars<-ChemAnalCore
 
-allVars<-allVars[c(2,84,13,14,15,120:151)] #
+allVars<-dplyr::select(allVars, Label, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#[c(2,84,13,14,15,120:151)] #allVars<-allVars[c(2,84,13,14,15,120:151)]
 allVars<-allVars[complete.cases(allVars),] #remove any nulls
 row.names(allVars)<-allVars[,1]
 allVars$Label<-NULL
@@ -20,7 +21,7 @@ plot(hClusters,labels=(df$SiteName), hang = -1, main="Otolith Core Chemistry")
 
 #Make distance matrices for geographic distance as well
 allVars<-ChemAnalCore
-allVars<-allVars[c(2,84,13,14,15,107,120:151)]
+allVars<-dplyr::select(allVars, Label, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#allVars<-allVars[c(2,84,13,14,15,107,120:151)]
 allVars<-allVars[complete.cases(allVars),] #remove any nulls
 allVars<-allVars[c(1,6)] # Distance from Angle Crossing changes from 107 above to 6
 row.names(allVars)<-allVars[,1]
@@ -112,7 +113,7 @@ lapply(otoParts, otoPartChem)
 #But now with important variables only AFTER SCALING. These include C13, N15, CN ratio, B, K, V, Na, Rb.
 ImportantVars<-ChemAnalCore
 
-ImportantVars<-ImportantVars[c(2,84,13,14,15,121,122,127,131,139)] #
+ImportantVars<-dplyr::select(ImportantVars, Label, SiteName,Delta13C,Delta15N,CNRatio,B,K,V,Na,Rb)#ImportantVars<-ImportantVars[c(2,84,13,14,15,121,122,127,131,139)] #
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 row.names(ImportantVars)<-ImportantVars[,1]
 ImportantVars$Label<-NULL
@@ -140,7 +141,7 @@ plot(hClusters,labels=(df$SiteName), hang = -1, main="Otolith Core Chemistry")
 
 #Make distance matrices for geographic distance as well
 ImportantVars<-ChemAnalCore
-ImportantVars<-ImportantVars[c(2,84,13,14,15,107,121,122,127,131,139)]
+ImportantVars<-dplyr::select(ImportantVars, Label, SiteName,Delta13C,Delta15N,CNRatio,B,K,V,Na,Rb)#ImportantVars<-ImportantVars[c(2,84,13,14,15,107,121,122,127,131,139)]
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 ImportantVars<-ImportantVars[c(1,6)] # Distance from Angle Crossing changes from 107 above to 6
 row.names(ImportantVars)<-ImportantVars[,1]
