@@ -74,6 +74,7 @@ read_chunk('RandForestToIDImportantElemIso.R')
 <<RandomForestElemIso>>
 ```
 
+The highest accuracy prediction (15.4% error rate) is the one using all four otolith zones. This may be due to variable age of larvae, some local effect, exogenous feeding etc. as well as the femals migreation and barriers etc.
 Given that each part of the otolith can provide an out-of-bag classification rate better than 75% it suggests that otolith microchemistry with delta 13 C and CN ratio, over this small spatial scale, is sufficiently consistently variable, at least within a year, to make a reasonable predictor of site of origin for the Larvae. It is worth noting that the otolith core provided the most accurate classification. Given the accuracy of the core chemistry is sub-optimal because of the inability of the operator to accuratel identify and sample the centre of the otolith in all cases with laser ablation the possibilty remains that cleaning the data in that dataset might be improved by deleting inaccurate ablates. This is possible because each otolith was assigned an accuracy score.
 
 ###A Chemotype Dendrogram and a Mantel Test.
@@ -120,7 +121,7 @@ read_chunk('genChemDistPlot.R')
 ```
 ##Discussion Points (just dot points)
 
-This is interesting given that there is a relationship between genotype and chemotype but it is not one due to covariance based on geographic distance. One not unreasonable explaination for this is that suggest that chemotype is afftected by the genotype directly. That is, element deposition in otolith is variable but under some genetic control. Another more intriguing possibility is that the geochemistry fails to predict the capture site of the larvae because it is not the ultimte source of that geochemistry. The ultimate source of the geochemistry is thewater and food environment of the female when the yolk which was laid down in the developing eggs. This happens earlier in the season and  well before spawning so it does leave ope the possibiltiy as suggested by some authors that the female has migrated to the spawning site. Unfortunately in this study there is no  measure that might be suitable as a proxy regarding the origin of the female during oogenisis.  
+This is interesting given that there is a relationship between genotype and chemotype but it is not one due to covariance based on geographic distance. One not unreasonable explaination for this is that suggest that chemotype is afftected by the genotype directly. That is, element deposition in otolith is variable but under some genetic control. Another more intriguing possibility is that the geochemistry fails to predict the capture site of the larvae because it is not the ultimte source of that geochemistry. The ultimate source of the geochemistry is thewater and food environment of the female when the yolk which was laid down in the developing eggs. This happens earlier in the season and  well before spawning so it does leave ope the possibiltiy as suggested by some authors that the female has migrated to the spawning site. Unfortunately in this study there is no  measure that might be suitable as a proxy regarding the origin of the female during oogenesis.  
 
 ##Code Chunks in this Document
 
