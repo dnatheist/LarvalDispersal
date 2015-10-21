@@ -1,3 +1,5 @@
+#I think this needs re vamping with dplyr. It is too dependant on column position. 
+
 otoPartChem <- function(otoParts){
   
   ImportantVars<-otoParts
