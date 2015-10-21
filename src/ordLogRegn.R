@@ -1,15 +1,16 @@
 ## @knitr ordLogRegn
 
-require(clusterSim)
+require(dplyr)
+
 ImportantVars<-ChemAnalCore
-ImportantVars<-ImportantVars[c(84,13,14,15,121,122,127,131,139)]
+ImportantVars<- dplyr::select(ImportantVars, SiteName,Delta13C,Delta15N,CNRatio,Li:Pb)#ImportantVars<-ImportantVars[c(84,13,14,15,121,122,127,131,139)] Not all are in the new bit....
 ImportantVars<-ImportantVars[complete.cases(ImportantVars),] #remove any nulls
 ImportantVars <- droplevels(ImportantVars)#Not sure why get error without this line
-
+require(clusterSim)
 # Normalise the Data
 ImpVarScaled<-data.Normalization (ImportantVars,type="n4",normalization="column")
 #Check it looks OK
-print(ImpVarScaled)[10:20,]
+#print(ImpVarScaled)[10:20,]
 
 ggplot(ImpVarScaled, aes(x = as.factor(SiteName), y = V)) +
   geom_boxplot(size = .75) +
