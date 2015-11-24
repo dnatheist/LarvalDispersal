@@ -28,6 +28,6 @@ s.class(pca1$scores, pop(gl.dart), col=rainbow(nlevels(pop(gl.dart))))
 #####
 mc.gen <- genlight2genind(gl.dart)
 
-% !Rnw weave = Sweave
+#% !Rnw weave = Sweave
 library(PopGenReport)
 pgr <- popgenreport(mc.gen )

@@ -1,0 +1,25 @@
+
+    model {
+    
+    # Priors
+    alpha ~ dnorm(0,0.001)
+    beta ~ dnorm(0,0.001)
+    
+    # Likelihood
+    for (i in 1:n) {
+    C[i] ~ dpois(lambda[i]) 
+    log(lambda[i]) <- alpha + beta *x[i]
+    
+    # Fit assessments
+    Presi[i] <- (C[i] - lambda[i]) / sqrt(lambda[i]) # Pearson residuals
+    C.new[i] ~ dpois(lambda[i])		# Replicate data set
+    Presi.new[i] <- (C.new[i] - lambda[i]) / sqrt(lambda[i]) # Pearson resi
+    D[i] <- pow(Presi[i], 2)
+    D.new[i] <- pow(Presi.new[i], 2)
+    }
+    
+    # Add up discrepancy measures
+    fit <- sum(D[])
+    fit.new <- sum(D.new[])
+    }
+    

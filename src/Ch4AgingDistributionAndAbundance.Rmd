@@ -20,47 +20,57 @@ opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
 
 knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make Figures larger and save them
 ```
-This document is mainly to develop and output the method for the Aging part rather than the  Distribution and Abundance part of the chapter because the results and discussion parts are mostly done in word document for this chapter. (from the ACTEW document etc)
+This document is mainly to develop and output the method for the Aging part of the results rather than the  Distribution and Abundance part of the results section of the chapter because the results and discussion parts are mostly done in word document for this chapter. (from the ACTEW document etc)
 
-Actually this whole file can probs be deleted as this aging is coming from Tableau formula.
+Actually this whole file can probs be deleted as this aging is coming from Tableau formula.(TBC or NOT?)
 
 ##Methods
 ![Map of Study Area](../images/M2GStudyArea.jpg)
+
 
 ###Age of Larval Fish
 ```{r}
 yearList<-list("2011","2012","2013")
 ```
-This section is to add some calculated variables to the data. Firstly to add age which is estimated from Otolith Length. Otolith lengths and known ages have been prepared for a subset from each year (n=x,y,z) respectively for {r yearOnly}
+This section is to add some calculated variables to the data. Firstly to add age which is estimated from Otolith Length. Otolith lengths and known ages have been prepared for  `r nrow(qslAllLarvaInfo)` larvae. A subset `r rowSums(with(qslAllLarvaInfo, table(YearOnly, KnownAge)))` from each year of `r nrow(subset(qslAllLarvaInfo, qslAllLarvaInfo$YearOnly==2011))`,  `r nrow(subset(qslAllLarvaInfo, qslAllLarvaInfo$YearOnly==2012))`, `r nrow(subset(qslAllLarvaInfo, qslAllLarvaInfo$YearOnly==2013))` respectively for `r yearList` were aged professionally and used to verify age otolith length curves.
 
 ```{r "Age Curve", echo="TRUE"}
 require(ggplot2)
-ageCurveDF<-data.frame(qslAllLarvaInfo$KnownAge,qslAllLarvaInfo$MeanOtolithLength,qslAllLarvaInfo$YearOnly)
+ageCurveDF<-data.frame(larv$KnownAge,larv$MeanOtolithLength,larv$YearOnly)
 ageCurveDF<-ageCurveDF[complete.cases(ageCurveDF),]
 
-p <- ggplot(ageCurveDF, aes(qslAllLarvaInfo.MeanOtolithLength, qslAllLarvaInfo.KnownAge)) + geom_point(aes(colour=as.factor(qslAllLarvaInfo.YearOnly)),size=3)
-p<-p + facet_grid(. ~ qslAllLarvaInfo.YearOnly)
+p <- ggplot(ageCurveDF, aes(larv.MeanOtolithLength, larv.KnownAge)) + geom_point(aes(colour=as.factor(larv.YearOnly)),size=3)
+p<-p + facet_grid(. ~ larv.YearOnly)
 p + stat_smooth(method="lm", se=FALSE)
 
 require(nlme) ## OR library(lme4)
-lmList(qslAllLarvaInfo.KnownAge~qslAllLarvaInfo.MeanOtolithLength|qslAllLarvaInfo.YearOnly,data=ageCurveDF)
-lms<-lmList(qslAllLarvaInfo.KnownAge~qslAllLarvaInfo.MeanOtolithLength|qslAllLarvaInfo.YearOnly,data=ageCurveDF)
+lmList(larv.KnownAge~larv.MeanOtolithLength|larv.YearOnly,data=ageCurveDF)
+lms<-lmList(larv.KnownAge~larv.MeanOtolithLength|larv.YearOnly,data=ageCurveDF)
 summary(lms)
 ```
 
 So age curves for each year do differ significantly so individual year curves are used to estimate the larval age for each year cohort, rather than pooling the larva age and otolith size curves. So these three curves have been used in the database to calculate the estimated age for each larvae.
 
-```{r "Estimate Ages for all Larva Based on Mean Otolith Size", eval=FALSE}
-# NOT USED Calculate the estimates for each year and store them in vecotor ready for export/import to database.
+```{r "Estimate Ages for all Larva Based on Mean Otolith Size", eval=TRUE, echo=TRUE}
+#Calculate the estimates for each year and store them in vector ready for export/import to database.
 
-qslAllLarvaInfo$ageOL2<-"NA"
-ageEst<- function(yearList) {
-        tmp<-dplyr::filter(qslAllLarvaInfo,qslAllLarvaInfo$YearOnly==yearList)
-        }
-#qslAllLarvaInfo$ageOL2
+larv$ageOL2<-"NA"
+larv$ageOL2<-as.numeric(larv$ageOL2)
 
-sapply(yearList, ageEst)
-#write.csv etc
+larv$ageOL2[larv$YearOnly==2011]<-as.numeric(lms$'2011'$coefficients[2])*larv$MeanOtolithLength[larv$YearOnly==2011] + as.numeric(lms$'2011'$coefficients[1])
+larv$ageOL2[larv$YearOnly==2012]<-as.numeric(lms$'2012'$coefficients[2])*larv$MeanOtolithLength[larv$YearOnly==2012] + as.numeric(lms$'2012'$coefficients[1])
+larv$ageOL2[larv$YearOnly==2013]<-as.numeric(lms$'2013'$coefficients[2])*larv$MeanOtolithLength[larv$YearOnly==2013] + as.numeric(lms$'2013'$coefficients[1])
+
+####Calculate Some Additional Age Related Parameters
+
+larv$hatchDoY<-as.numeric(larv$Day.of.Year)-larv$ageOL2
+larv$incubTime<-20.67-0.667*larv$WaterTempMean
+larv$spawnDoY<-larv$hatchDoY-larv$incubTime
+
+ageForDataBase<-data.frame(larv$LarvalID,larv$KnownAge,larv$ageOL2,larv$spawnDoY,larv$incubTime,larv$hatchDoY)
+
+
+#write.csv(ageForDataBase,file= ".\\forDataBase\\ageEstimates.csv") #This line is hashed out because it can not be done from within knitr and only needs to be done once (correctly) as the data winds up in the database for all chapters to use.
 
 ```
 
@@ -72,11 +82,6 @@ sapply(yearList, ageEst)
   
   Spawning:[Hatch]-[Incubation] (Day of the Year)
 
-```{r "Addional Parameters"}
-larv$hatchDoY<-larv$Day.of.Year-larv$ageOL
-larv$incubTime<-20.67-0.667*larv$WaterTempMean
-larv$spawnDoY<-larv$hatchDoY-larv$incubTime
-```
 
 These additional parameters will be used to estimate distances that the larvae have dispersed based on the number of days available to them since leaving the nest and the day and location of collection. In turn the time available will be used to model the most likely distance travelled by the larvae.
 

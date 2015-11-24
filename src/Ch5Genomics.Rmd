@@ -21,7 +21,7 @@ knitr::opts_chunk$set(fig.width=15, fig.height=15,fig.path="../graphs/") #Make F
 ```
 This document includes methods, results and possibly some discussion dot points for the genomics and larval dispersal chapter.  
 
-```{r "LoadLibraries", echo=TRUE}
+```{r "LoadLibraries"}
 source("http://addictedtor.free.fr/packages/A2R/lastVersion/R/code.R")# load code of A2R function
 library(ggplot2)
 library(ggdendro)
@@ -97,7 +97,7 @@ table(dfBPchange)
 
 The polymorphisms examined included SNPs and small indels in restriction enzyme recognition sites, and while none were observed,  larger insertions/deletions in restriction fragments could also have been utilised. The polymorphisms selected for genotyping were all snps. 
 
-The length of the fragments of DNA in this sequencing was `r lengthDNA` base pairs. The position of the polymorphism along the 69 base pair DNA fragment can be seen in the following histogram
+The length of the fragments of DNA in this sequencing was `r lengthDNA` base pairs. The position of the polymorphism along the `r lengthDNA` base pair DNA fragment can be seen in the following histogram
 
 ```{r}
 polymorphismPositionHistogram<-hist(as.numeric(DMac14.1567snps$X..4),main= "Histogram of SNP Position in DaRT seq 69 Base Pair Fragment", xlab="SNP Position on Fragment - BIN", breaks = 13, col = "lightblue", border = "pink",cex.main = 2.5,cex.lab=2) #a plot of the relative position of the polymorphism along the 69 base pair fragment of DNA.
@@ -167,6 +167,8 @@ row.names(larvalClades)<-larvalClades$Row.names
 larvalClades$Row.names<-NULL
 
 #So the list of larval clades no and raceCladeNumber -> database.
+
+#write.csv(DF named something,file= ".\\forDataBase\\geneticGroupings.csv") #This line is hashed out because it can not be done from within knitr and only needs to be done once (correctly) as the data winds up in the database for all chapters to use.
 
 ```
 

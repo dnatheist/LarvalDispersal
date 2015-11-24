@@ -10,7 +10,7 @@ rm(DMac14.1567DistMatrix) #Tidy up
 
 larv<-qslAllLarvaInfo #Make dataframe from larval data
 rownames(larv) <- larv[,1] #Make Labels row names too or better: row.names(larv)<-larv$Label
-rm(qslAllLarvaInfo) #Tidy up
+#rm(qslAllLarvaInfo) #Tidy up
 
 # Extract more meaningful names (Labels) in place of Larval ID numbers
 DArTsnps<-t(DArTsnps) # Just transpose this way larvae become observations and snps become the variables.

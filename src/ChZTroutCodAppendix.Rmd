@@ -50,3 +50,6 @@ Both the heatmap and dendrogram for Trout Cod shows three distinct clades.
 
 ##Discussion (points only)
 * It will be interesting to mito-sequence the trout cod and determine the species of the male and female parent. It is likely that that the female is the Trout cod in the mating pair given the scarcity of trout cod compared with Murray cod and the mate pressure that must exist. 
+
+When BLASTED (Stephen F. Altschul, Thomas L. Madden, Alejandro A. Schäffer, Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), "Gapped BLAST and PSI-BLAST: a new generation of protein database search programs", Nucleic Acids Res. 25:3389-3402. ) the seven matches for Maccullochella macquariensis mitochondria were limited to the putative Trout cod clades confirming the analysis but also suggesting that the F1 and F2 hybrids had a Trout cod for a female parent rather than a male parent. While n=2 in this case and the finding is not statistically significant, it does accord with our hytpothesis that female Trout cod, being outnumbered in the river are more likely to be pressured into mating by plentifuMurray cod males, rather than locating the scarcer Trout cod males.
+ 

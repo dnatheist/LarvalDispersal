@@ -132,7 +132,7 @@ MCdm<-MCsnps[-c(1:7),] #remove non-numeric variables
 MCdm <- dist(MCdm) # Create a Murray Cod distance matrix
 MCdm<-as.matrix(MCdm)
 MCdm<-as.data.frame(MCdm)
-#This is one part of the Mantel test given Isolation by Distance. It does not vary inside the iteration (Genetic distance is fixed) while actual geographic distance (dispersal velocity) is the unknown and is recalculated within the iteration.
+#This is one part of the Mantel test given Isolation by Distance. It does not vary inside the iteration (Genetic distance is fixed) while actual geographic distance (dispersal velocity) is the unknown and is recalculated within the iteration below.
 
 #First sort MCdm - just to be sure that the two matrices are ordered identically before mantel test.
 MCdm<-as.data.frame(MCdm)
@@ -145,11 +145,17 @@ MCdm<-as.matrix(MCdm)
 
 itmant <- matrix(nrow=7001, ncol=3) #Is a 7002 row DF to store result but NA generated in for loop below are omited later. 
 
+#Initialise two vectors for variance analysis a la Shuvo suggestion
+geoDistVector<-vector()
+MCdmVector<-vector()
+ldvRangeVector<-vector()
+ldvRangeMatrix<-matrix(nrow = 86, ncol=86)
+
 #Iteration begins here:
 ptm <- proc.time()
-for (nd in seq(-2000,5000, by=10)){# Posible dispersal from 2km upstream to 5 km downstream, 10m increments 
+for (ldvRange in seq(-2000,5000, by=10)){# Possible dispersal from 2km upstream to 5 km downstream, 10m increments 
         
-        larv$tmpNestDist<-larv$Distance.to.Angle.Crossing..m.-(nd*(larv$Day.of.Year-(larv$hatchedDoY+7)))  
+        larv$tmpNestDist<-larv$Distance.to.Angle.Crossing..m.-(ldvRange*(larv$Day.of.Year-(larv$hatchedDoY+7)))  
         
         #Create Geographic Distance Matrix using Nest Distance
         geodist<-data.frame(larv$Label,larv$tmpNestDist)
@@ -167,17 +173,25 @@ for (nd in seq(-2000,5000, by=10)){# Posible dispersal from 2km upstream to 5 km
         GeoDistMathm<-GeoDistMathm[,order(names(GeoDistMathm))]#sort column order
         GeoDistMathm<-as.matrix(GeoDistMathm)
         
+        #make Vectors for linear model
+        geoDistVector<-append(geoDistVector,(as.vector(GeoDistMathm)))
+        #ldvRangeMatrix<-(replicate(length(ldvRange), ldvRange))
+        ldvRangeVector<-append(ldvRangeVector,replicate(nrow(geodist)*nrow(geodist),ldvRange))
+        #OLDappend(ldvRangeVector, (as.vector(ldvRange)))
+        #OLDldvRangeMatrix<-(replicate(length(ldvRangeVector), ldvRangeVector))
+        MCdmVector<-append(MCdmVector,(as.vector(MCdm)))
+        
         mant<-mantel.rtest(as.dist(GeoDistMathm), as.dist(MCdm), nrepet = 99)
-        ndr<-nd+2001 #to keep in positive for row numbers in itmant data frame
-        itmant[ndr,] <- c(nd, mant$obs, mant$pvalue)
+        ndr<-ldvRange+2001 #to keep in positive for row numbers in itmant data frame
+        itmant[ndr,] <- c(ldvRange, mant$obs, mant$pvalue)
 }
 
-larv$tmpNestDist<-NULL #tidy up temporary variables
-rm(ndr)
-rm(geodist)
-rm(GeoDistMat)
-rm(GeoDistMathm)
-rm(mant)
+#larv$tmpNestDist<-NULL #tidy up temporary variables
+#rm(ndr)
+#rm(geodist)
+#rm(GeoDistMat)
+#rm(GeoDistMathm)
+#rm(mant)
 
 proc.time() - ptm
 
